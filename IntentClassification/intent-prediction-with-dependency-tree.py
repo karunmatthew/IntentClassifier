@@ -21,6 +21,8 @@ action = {'pick': 'GRASP',
 complex_action = {
                   'take to': 'TRANSPORT',
                   'turn left': 'MOVE_LEFT',
+                  'move left': 'MOVE_LEFT',
+                  'move right': 'MOVE_RIGHT',
                   'turn right': 'MOVE_RIGHT',
                   'turn around': 'MOVE_BACK',
                   'turn on': 'NOT_SUPPORTED'
@@ -36,6 +38,8 @@ def get_intent_details(doc, verb, verb_index):
             adverb = token.text
         elif token.pos_ == 'ADP' and token.head.text == verb and token.head.i == verb_index and adposition == '':
             adposition = token.text
+        elif token.pos_ == 'ADV' and token.head.text == verb and token.head.i == verb_index and adverb == '':
+            adverb = token.text
 
     return adverb, adposition
 
