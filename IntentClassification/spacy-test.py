@@ -25,7 +25,7 @@ span = doc[1:4]
 # load the small english model
 nlp = spacy.load("en_core_web_lg")
 
-doc = nlp("turn to your left and go to the counter")
+doc = nlp("take a step to your left")
 root_verb = ''
 for token in doc:
     print(token.text, ' ', token.pos_, ' ', token.dep_, ' ', token.head.text)
@@ -40,4 +40,4 @@ for ent in doc.ents:
     print(ent.text, ' ', ent.label_)
 
 # spacy explain function to define spacy notations
-print(spacy.explain("acomp"))
+print(spacy.explain("dobj"))
