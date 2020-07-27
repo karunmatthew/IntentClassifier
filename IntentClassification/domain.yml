@@ -1,0 +1,31 @@
+intents:
+  - release
+  - pickup
+  - move-right
+  - move-left
+  - move-forward
+  - move-back
+
+responses:
+
+  utter_pickup:
+  - text: "pickup action"
+
+  utter_move-right:
+  - text: "move-right action"
+
+  utter_move-left:
+  - text: "move-left action"
+
+  utter_move-forward:
+  - text: "move-forward action"
+
+  utter_move-back:
+  - text: "move-back action"
+
+  utter_release:
+  - text: "release action"
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true

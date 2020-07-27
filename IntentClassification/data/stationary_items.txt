@@ -1,0 +1,11 @@
+counter
+sink
+refrigerator
+fridge
+microwave
+counter top
+workbench
+table
+cabinet
+kitchen sink
+shelf
