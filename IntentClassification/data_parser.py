@@ -1,25 +1,43 @@
+# This program contains utility functions to help with the
+# pre-processing of the training data. As we focus on only
+# kitchen-floor-plans and simple pick and place experiments
+# we parse the JSON file in the alfred dataset and copy the
+# ones that satisfy the condition to the /data-input folder
+# and also generate an OUT_FILE which contains all the high
+# descriptions of the trials
+
 import json
 import os
 from shutil import copy
 import ntpath
 
-FOLDER_PATH = "/home/karun/Research_Project/alfred/data/json_2.1.0/tests_seen/"
-FILE_PATH = "/home/karun/Research_Project/alfred/data/json_2.1.0/tests_seen/" \
-            "trial_T20190907_032644_545223/traj_data.json"
+# CONSTANTS
 WRITE_OPTION = "w"
-OUT_FILE = "outfile"
-
 INDEX = 1
+
+# ----------------------------------------
+# CONFIGURATION VALUES ARE SPECIFIED BELOW
+# ----------------------------------------
+# FOLDER_PATH = "/home/karun/Research_Project/alfred/data/json_2.1.0/tests_seen/"
+FOLDER_PATH = "/home/karun/Research_Project/alfred/data/json_feat_2.1.0/"
+# file to write out the high description texts
+OUT_FILE = "outfile_pickup_simple"
+# the type of task trials to consider
+# if task_type is '', then all types of
+# tasks are considered
+task_type = "pick_and_place_simple"
+# -----------------------------------------
+
 outfile = open(OUT_FILE, WRITE_OPTION)
 
 
 # extracts the high desc and task desc for each of the json file passed
-def parse_json_file(file):
-
+def parse_json_file(file, filter_task_type):
+    print(file)
     with open(file) as json_file:
         json_object = json.load(json_file)
         language_annotations = json_object['turk_annotations']['anns']
-        if is_kitchen_floor_plan(json_object):
+        if is_kitchen_floor_plan(json_object) and is_of_task_type(json_object, filter_task_type):
             global INDEX
             print("\n" + file)
             copy(file, "./data-input/" + os.path.splitext(ntpath.basename(file))[0] + str(INDEX) + ".json")
@@ -43,16 +61,30 @@ def is_kitchen_floor_plan(json_object):
         return False
 
 
+# returns true if the trial is of the passed task type
+def is_of_task_type(json_object, filter_task_type):
+    if filter_task_type == '':
+        return True
+    elif 'task_type' in json_object and json_object['task_type'] == filter_task_type:
+        return True
+    else:
+        return False
+
+
 # copies all kitchen floor plan json files into the data folder of the project
 def process_files(folder_path):
     for path, subdirs, files in os.walk(folder_path):
         for name in files:
-            file_path = os.path.join(path, name)
-            parse_json_file(file_path)
+            extension = os.path.splitext(name)[1]
+            if extension == '.json':
+                file_path = os.path.join(path, name)
+                parse_json_file(file_path, task_type)
 
-
-
-#parse_json_file(FILE_PATH)
 
 process_files(FOLDER_PATH)
 outfile.close()
+
+# TESTING CODE
+# FILE_PATH = "/home/karun/Research_Project/alfred/data/json_2.1.0/tests_seen/" \
+#             "trial_T20190907_032644_545223/traj_data.json"
+# parse_json_file(FILE_PATH)

@@ -126,7 +126,7 @@ Turn around to face the lower right cabinets next to the sink.	MOVE_BACK
 Put the white mug in the cabinet directly below the loaf of bread on the counter.	RELEASE
 go to the counter where the microwave is	MOVE
 pick up the white mug to the left of the microwave	GRASP
-approach the microwave with the cup	MOVE
+approach the microwave with the cup	TRANSPORT
 warm the cup in the microwave then remove	NOT_SUPPORTED
 take the cup to the cabinet to the right of the sink	TRANSPORT
 put the mug in the cabinet	RELEASE
