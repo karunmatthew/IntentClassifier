@@ -1,14 +1,16 @@
 import spacy
 
-# INPUT_FILE = "outfile1"
-INPUT_FILE = "outfile_pickup_simple_train"
+INPUT_FILE = "outfile_pickup_simple1"
 READ = "r"
+OUTPUT_FILE = "outfile_pickup_simple_train"
+WRITE = "w"
 
 
 # load the spacy english model
 nlp = spacy.load("en_core_web_lg")
 
 file = open(INPUT_FILE, READ)
+outfile = open(OUTPUT_FILE, WRITE)
 
 actions = {'pick': 'GRASP',
            'move': 'MOVE_FORWARD',
@@ -16,6 +18,7 @@ actions = {'pick': 'GRASP',
            'go': 'MOVE_FORWARD',
            'place': 'RELEASE',
            'put': 'RELEASE',
+           'carry': 'TRANSPORT'
            }
 
 # walk
@@ -91,29 +94,17 @@ def get_most_similar_action(verb):
         return 'NOT_SUPPORTED'
 
 
-def classify_intent():
-    count = 0.0
-    correct = 0.0
+def generate_training_set():
+    count = 0
     for line in file:
         count += 1
         if count > 2000:
             break
         line = line.strip()
-        result = classify_intent_from_command(line)
-        if result:
-            correct += 1
-
-    print('Accuracy :: ', correct/count)
-    print('Correct  :: ', correct)
-    print('Total    :: ', count)
+        classify_intent_from_command(line)
 
 
-def classify_intent_from_command(data):
-    print(data)
-    cols = data.split('\t')
-    line = cols[0]
-    print(line)
-    tag = cols[1]
+def classify_intent_from_command(line):
     doc = nlp(line)
     root_verbs = []
     root_verb_indices = []
@@ -121,25 +112,19 @@ def classify_intent_from_command(data):
     verb_indices = []
 
     for token in doc:
-        # print(token.text, ' ', token.pos_, ' ', token.dep_, ' ', token.head.text)
+        print(token.text, ' ', token.pos_, ' ', token.dep_, ' ', token.head.text)
         if token.dep_ == 'ROOT' and token.pos_ == 'VERB':
             root_verbs.append(token.text)
             root_verb_indices.append(token.i)
         elif token.pos_ == 'VERB':
             verbs.append(token.text)
             verb_indices.append(token.i)
-    # print(line)
-    # print(root_verbs)
-    # print(root_verb_indices)
-    # print(verbs)
-    # print(verb_indices)
+
     main_intent = ''
     for root_verb, root_verb_index in zip(root_verbs, root_verb_indices):
         root_adverb, root_adposition = get_intent_details(doc, root_verb, root_verb_index)
-        print('MAIN INTENT --- ', root_verb, ' ', root_adverb, ' ', root_adposition)
         if main_intent == '':
             main_intent = get_intent_class(root_verb, root_adverb, root_adposition)
-        print('MAIN INTENT CLASS --- ', main_intent)
 
     if len(root_verbs) > 1:
         print('Compound sentence')
@@ -155,19 +140,9 @@ def classify_intent_from_command(data):
             print('OTHER INTENT --- ', verb, ' ', adverb, ' ', adposition)
             print('OTHER INTENT CLASS --- ', other_intent)
 
-    print("ACTUAL CLASS :: ", tag)
-    if tag == main_intent:
-        print('MATCH\n')
-        return True
-    # temporarily not considering unsupported tags
-    # elif tag == 'NOT_SUPPORTED':
-    #    return True
-    else:
-        print('NOT MATCH\n')
-        return False
+    outfile.write(line + "\t" + main_intent + '\n')
 
 
-classify_intent()
-# classify_intent_from_command('take a step to your left')
-
+generate_training_set()
 file.close()
+outfile.close()

@@ -1,24 +1,31 @@
 ## pickup path
-* pickup
+* GRASP
   - utter_pickup
 
 ## release path
-* release
+* RELEASE
   - utter_release
 
 ## move-right path
-* move-right
+* MOVE_RIGHT
   - utter_move-right
 
 ## move-left path
-* move-left
+* MOVE_LEFT
   - utter_move-left
 
 ## move-forward path
-* move-forward
+* MOVE_FORWARD
   - utter_move-forward
 
 ## move-back path
-* move-back
+* MOVE_BACK
   - utter_move-back
 
+## transport path
+* TRANSPORT
+  - utter_transport
+
+## not_supported path
+* NOT_SUPPORTED
+  - utter_not_supported
