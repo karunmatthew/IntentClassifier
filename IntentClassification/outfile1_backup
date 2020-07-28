@@ -16,7 +16,7 @@ Turn right and walk to the microwave.	MOVE_RIGHT
 Heat the plate.	NOT_SUPPORTED
 Turn around and walk to the far right corner of the room.	MOVE_BACK
 Place the plate on the black end table in front of the knife.	RELEASE
-Walk forward to the counter then turn right and walk to the counter.	MOVE_FORWARD
+Walk forward to the counter then turn right and walk to the counter.	MOVE
 Pick up the yellow handled knife that's in front of you.	GRASP
 Turn right and walk to the right side of the sink and turn left to face it.	MOVE_RIGHT
 Cut the apple in the sink into three big chunks.	NOT_SUPPORTED
@@ -36,15 +36,15 @@ Turn left, move to in front of the refrigerator.	MOVE_LEFT
 Put the apple section in the refrigerator, chill it, pick it back up.	RELEASE
 Turn right, move to in front of the microwave.	MOVE_RIGHT
 Put the apple section in the microwave.	RELEASE
-Go to the counter left of the sink	MOVE_FORWARD
+Go to the counter left of the sink	MOVE
 Pick up the knife	GRASP
-Go to the sink	MOVE_FORWARD
+Go to the sink	MOVE
 Cut the apple in the sink	NOT_SUPPORTED
 Put the knife in the sink	RELEASE
 Pick up an apple slice	GRASP
-Go to the fridge	MOVE_FORWARD
+Go to the fridge	MOVE
 Chill the apple	NOT_SUPPORTED
-Go to the microwave	MOVE_FORWARD
+Go to the microwave	MOVE
 Put the apple in the microwave	RELEASE
 Turn left, go forward, at the fridge turn right, go forward to the oven, turn right, go forward to the wall, turn left to face the oven.	MOVE_LEFT
 Take the bowl from the cabinet beneath the counter to the right of the oven.	TRANSPORT
@@ -58,13 +58,13 @@ take the bowl to the fridge	TRANSPORT
 chill the bowl in the fridge then remove	NOT_SUPPORTED
 approach the cabinet above the fridge to the right	MOVE_RIGHT
 put the bowl in the cabinet	RELEASE
-Walk over to the stove.	MOVE_FORWARD
+Walk over to the stove.	MOVE
 Grab the bowl in the cupboard next to the stove.	GRASP
-Head over to the fridge.	MOVE_FORWARD
+Head over to the fridge.	MOVE
 Chill the bowl in the fridge.	NOT_SUPPORTED
 Grab the bowl back and walk over to the cabinet.	TRANSPORT
 Put the bowl in the cabinet.	RELEASE
-Move around the counter keeping it on the right until you're in front of it	MOVE_FORWARD
+Move around the counter keeping it on the right until you're in front of it	MOVE
 Pick up the knife on the counter	GRASP
 Turn around and move to the sink on the right	MOVE_BACK
 Slice the bread to the left of the sink	NOT_SUPPORTED
@@ -80,7 +80,7 @@ Turn around and return to the second loaf of bread that is below the tomato	MOVE
 Pick up a slice of bread from the middle of the loaf that sits below the tomato	GRASP
 Turn around and go back to the small room with the trash can	MOVE_BACK
 Put the second slice of bread in the trash beneath the first one	RELEASE
-Walk forward to the corner counter area.	MOVE_FORWARD
+Walk forward to the corner counter area.	MOVE
 Pick up the knife from the counter.	GRASP
 Turn left and go to the loaf of bread on the other side of the sink.	MOVE_LEFT
 Slice the loaf of bread on the counter next to the sink.	NOT_SUPPORTED
@@ -96,7 +96,7 @@ Turn around and walk to the loaf of bread next to the oven.	MOVE_BACK
 Pick up a slice of bread from the counter.	GRASP
 Turn around and walk to the trash can.	MOVE_BACK
 Put the slice of bread in the trash can.	RELEASE
-Go to the counter straight ahead, on your left.	MOVE_FORWARD
+Go to the counter straight ahead, on your left.	MOVE
 Pick up the knife to the left of the lettuce on the counter.	GRASP
 Turn to your left and go to the counter just past the sink.	MOVE_LEFT
 Cut the loaf of bread on the back of the counter, to the left of the faucet.	NOT_SUPPORTED
@@ -124,13 +124,13 @@ Turn to face the front of the microwave.	NOT_SUPPORTED
 Heat up the mug in the microwave, removing it afterwards.	NOT_SUPPORTED
 Turn around to face the lower right cabinets next to the sink.	MOVE_BACK
 Put the white mug in the cabinet directly below the loaf of bread on the counter.	RELEASE
-go to the counter where the microwave is	MOVE_FORWARD
+go to the counter where the microwave is	MOVE
 pick up the white mug to the left of the microwave	GRASP
 approach the microwave with the cup	TRANSPORT
 warm the cup in the microwave then remove	NOT_SUPPORTED
 take the cup to the cabinet to the right of the sink	TRANSPORT
 put the mug in the cabinet	RELEASE
-Walk forward and turn left to face the round table	MOVE_FORWARD
+Walk forward and turn left to face the round table	MOVE
 Pick up the nearest butter knife from the table	GRASP
 Turn left and walk forward and left to the kitchen sink	MOVE_LEFT
 Use the knife to cut the potato on the counter behind the sink	NOT_SUPPORTED
@@ -142,7 +142,7 @@ Move slightly right and turn back left to face the sink	MOVE_RIGHT
 Wash the potato slice under water in the sink then remove it	NOT_SUPPORTED
 Turn around and walk forward and left back over to the round table	MOVE_BACK
 Put the potato slice on the table	RELEASE
-Go forward and get in front of the loaf of bread that is next to the salt	MOVE_FORWARD
+Go forward and get in front of the loaf of bread that is next to the salt	MOVE
 Pick up the knife on the far left edge of the table	GRASP
 turn right and go the sink in the kitchen	MOVE_RIGHT
 slice the potato that is next to the bottle at the back of the sink.	NOT_SUPPORTED
@@ -154,7 +154,7 @@ go to the right side of the sink	MOVE_RIGHT
 wash the slice of potato in the sink	NOT_SUPPORTED
 Turn right and go to the round table on the left corner of the room	MOVE_RIGHT
 Place the slice of potato to the right of the bread loaf that is next to the salt.	RELEASE
-Move forward and face the table on your left.	MOVE_FORWARD
+Move forward and face the table on your left.	MOVE
 Take the knife off the table in front of you.	GRASP
 Turn left then left again and face the sink to your right.	MOVE_LEFT
 Slice the potato near the sink in front of you.	NOT_SUPPORTED
@@ -174,7 +174,7 @@ Turn around and walk to the counter ahead with the toaster.	MOVE_BACK
 Pick up the bottle to the left of the toaster on the counter.	GRASP
 Turn around and walk to the cabinet under the counter.	MOVE_BACK
 Open the lower cabinet, put the bottle inside to the left of the other bottle and close the door.	NOT_SUPPORTED
-walk to face stove	MOVE_FORWARD
+walk to face stove	MOVE
 pick up wine bottle from counter to left of stove	GRASP
 turn left and gaze down at cabinet below counter	MOVE_LEFT
 put wine bottle in cabinet	RELEASE

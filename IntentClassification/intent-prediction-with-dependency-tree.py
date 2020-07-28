@@ -3,15 +3,16 @@ import spacy
 INPUT_FILE = "outfile1"
 READ = "r"
 
+
 # load the spacy english model
 nlp = spacy.load("en_core_web_lg")
 
 file = open(INPUT_FILE, READ)
 
 actions = {'pick': 'GRASP',
-           'move': 'MOVE',
+           'move': 'MOVE_FORWARD',
            'take': 'GRASP',
-           'go': 'MOVE',
+           'go': 'MOVE_FORWARD',
            'place': 'RELEASE',
            'put': 'RELEASE',
            }
