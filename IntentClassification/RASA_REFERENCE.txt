@@ -1,4 +1,4 @@
 rasa train
 rasa shell
 rasa shell nlu
-rasa run --enable-api -m models/20200729-014018.tar.gz
+rasa run --enable-api -m models/20200729-042827.tar.gz
