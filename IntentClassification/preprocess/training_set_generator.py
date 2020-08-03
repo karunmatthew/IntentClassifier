@@ -1,8 +1,8 @@
 import spacy
 
-INPUT_FILE = "outfile_pickup_simple1"
+INPUT_FILE = "../data-train/outfile_pickup_simple"
 READ = "r"
-OUTPUT_FILE = "outfile_pickup_simple_train"
+OUTPUT_FILE = "../data-train/outfile_pickup_simple_train"
 WRITE = "w"
 
 
@@ -10,7 +10,7 @@ WRITE = "w"
 nlp = spacy.load("en_core_web_lg")
 
 file = open(INPUT_FILE, READ)
-outfile = open(OUTPUT_FILE, WRITE)
+
 
 actions = {'pick': 'GRASP',
            'move': 'MOVE_FORWARD',
@@ -95,16 +95,19 @@ def get_most_similar_action(verb):
 
 
 def generate_training_set():
+    outfile = open(OUTPUT_FILE, WRITE)  
     count = 0
     for line in file:
         count += 1
         if count > 2000:
             break
         line = line.strip()
-        classify_intent_from_command(line)
+        classify_intent_from_command(line, outfile)
+    outfile.close()
 
 
-def classify_intent_from_command(line):
+def classify_intent_from_command(line, outfile):
+
     doc = nlp(line)
     root_verbs = []
     root_verb_indices = []
@@ -143,6 +146,23 @@ def classify_intent_from_command(line):
     outfile.write(line + "\t" + main_intent + '\n')
 
 
-generate_training_set()
+def remove_duplicate_records(dup_file_path, unique_records_file_path):
+    dup_file = open(dup_file_path, READ)
+    lines = []
+    count = 0.0
+    for line in dup_file:
+        count = count + 1
+        if lines.count(line) == 0:
+            lines.append(line)
+
+    unique_records_file = open(unique_records_file_path, WRITE)
+    for line in lines:
+        unique_records_file.write(line)
+    unique_records_file.close()
+
+
+remove_duplicate_records("../data-train/outfile_pickup_simple_train",
+                         "../data-train/outfile_pickup_simple_train_unique")
+
+# generate_training_set()
 file.close()
-outfile.close()

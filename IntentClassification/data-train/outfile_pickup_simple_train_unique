@@ -1,0 +1,131 @@
+Turn around and walk to the dishwasher, then turn right.	MOVE_BACK
+Take the egg from the counter.	GRASP
+Turn around and walk forward until you are close to the oven, then turn left and walk to the fridge.	MOVE_BACK
+Open the fridge, place the egg inside, then close the fridge.	NOT_SUPPORTED
+Turn around and walk to coffee machine on the kitchen counter	MOVE_BACK
+Pick up the egg on your right.	GRASP
+Turn around and walk to the black fridge.	MOVE_BACK
+Put the egg in the fridge.	RELEASE
+Turn around then then turn to your right to face the kitchen counter	MOVE_BACK
+Pick up an egg off of the kitchen counter	GRASP
+Turn to your right and make your way over to the fridge	MOVE_RIGHT
+Open the fridge, put the egg inside and then close the door	NOT_SUPPORTED
+turn around, walk forward, turn right to face counter	MOVE_BACK
+pick up egg that is on the counter	GRASP
+turn right, turn left, walk to the fridge	MOVE_RIGHT
+open the fridge, put egg inside	NOT_SUPPORTED
+Move across the room to the counter top where the black pot is sitting	MOVE_FORWARD
+Pick up the egg to the left of the pot	GRASP
+Carry the egg to the fridge	TRANSPORT
+Place the egg on the top shelf of the fridge then shut the door	RELEASE
+Take one step forward then turn right and walk just past the counter then turn right and walk to the dishwasher, then turn right.	MOVE_FORWARD
+Pick up the egg from the counter.	GRASP
+Turn around and walk a few steps, then turn left and walk to the fridge.	MOVE_BACK
+Open the fridge, place the egg on the top shelf, and close the fridge.	NOT_SUPPORTED
+Walk forward two steps then turn right and walk to the fridge and turn right again and walk to the dishwasher and turn right.	MOVE_FORWARD
+Pick up the egg that is on the counter.	GRASP
+Walk to the fridge.	MOVE_FORWARD
+Open the fridge and put the egg on the top shelf to the right of the pot.	NOT_SUPPORTED
+Look down, walk straight, turn right when your reach table, walk straight, turn right to face dishwasher, walk straight and turn right to face counter with egg on it.	NOT_SUPPORTED
+Pick up the egg on the counter.	GRASP
+Turn around, walk straight, turn left to face the fridge, walk straight to the fridge and look down when you get to the fridge.	MOVE_BACK
+Open the fridge, place the egg in the fridge, close the fridge odor.	NOT_SUPPORTED
+Turn right and go to the coffee maker, then turn right and face the kitchen counter.	MOVE_RIGHT
+Pick up the egg from in front of the yellow vase.	GRASP
+Turn around and bring the egg to the black refrigerator.	MOVE_BACK
+Open the fridge, put the egg on the same shelf as the pot and then close the fridge.	NOT_SUPPORTED
+Turn to the right and then to the right again to walk around and face the counter top.	MOVE_RIGHT
+Pick up the egg from the counter top.	GRASP
+Turn around then go to the left to face the refrigerator.	MOVE_BACK
+Open the refrigerator, place the egg inside, and close the refrigerator.	NOT_SUPPORTED
+Turn right and walk along the counter until you get to the first corner.	MOVE_RIGHT
+Pick up the egg on the right side of the counter.	GRASP
+Turn right and walk to the fridge.	MOVE_RIGHT
+Put the egg the fridge.	RELEASE
+Walk to the stove.	MOVE_FORWARD
+Pick up the white pan with the circular pattern from the stovetop.	GRASP
+Turn around and make your way across the room to the white table.	MOVE_BACK
+Set the white pan down on the table.	RELEASE
+Turn left, take a step, turn right and walk to the stove.	MOVE_LEFT
+Pick up the frying pan on the back left burner of the stove top.	GRASP
+Turn completely around, walk to the wall, turn right, walk to the wall, turn right and face the table.	MOVE_BACK
+Put the frying pan on the table in front of the stool.	RELEASE
+Go straight to face the white stove top.	MOVE_FORWARD
+Pick the pan up from off of the stove top.	GRASP
+Turn around, go straight and then to the right then to the right again to face the end of the white kitchen table.	MOVE_BACK
+Place the pan on the white kitchen table.	RELEASE
+make a quarter turn to the left and move sideways to the counter to the left of the sink	MOVE_LEFT
+pick the frying pan up off of the counter	GRASP
+turn to the right and move forward to towards the fridge, turning right moving towards the trash bag that is in the corner of the room, turn to the right to face the table	MOVE_RIGHT
+put the frying pan on to the table	RELEASE
+turn around and walk to the counter that has the coffee maker then turn right and face the counter containing the toaster	MOVE_BACK
+Pick up the pan that is sitting on the counter in front of the toaster	GRASP
+Turn right and cross the room then hang right and head to the trash bag. At the trash bag turn right and face the white table	MOVE_RIGHT
+Place the pan on the white table	RELEASE
+Turn around and move to the left to face the counter in front of the toaster.	MOVE_BACK
+Pick the dish up from off of the counter.	GRASP
+Turn around, go straight, and then to the left to face the end of the white kitchen table.	MOVE_BACK
+Place the dish on the white table.	RELEASE
+walk to face stove	MOVE_FORWARD
+pick up frying pan on left front burner from stove top	GRASP
+walk to face left side of white table	MOVE_LEFT
+put frying pan on the table top	RELEASE
+Turn around, walk till you hit the outcrop, turn right, and walk till you hit the stove.	MOVE_BACK
+Pick up the frying pan to the left of the pot.	GRASP
+Turn around, walk till you hit the wall, turn right, walk till you hit the wall, then turn right to face the table.	MOVE_BACK
+Place the pan on the table.	RELEASE
+Turn left and walk up to the stove	MOVE_LEFT
+Pick up the frying pan from the front left stove burner	GRASP
+Turn around and walk forward then right to the white table	MOVE_BACK
+Put the pan down on the white table	RELEASE
+walk to face left side of white table	MOVE_FORWARD
+Move to the right and face the counter.	MOVE_RIGHT
+Pick up the tomato from the counter.	GRASP
+Move to the left and face the microwave.	MOVE_LEFT
+Put the tomato in the microwave.	RELEASE
+Turn right and walk a few feet then turn left to face the kitchen counter	MOVE_RIGHT
+Pick up the tomato from the counter	GRASP
+Turn and walk a few feet left then turn right to face the microwave	MOVE_BACK
+Put the tomato into the microwave	RELEASE
+Turn right, go towards sink.  Turn left to face counter top with tomato on it.	MOVE_RIGHT
+Pick up tomato from counter.	GRASP
+Turn left, carry tomato to counter with microwave on it on the right.	MOVE_LEFT
+Open microwave, put tomato on plate to the right of egg, on the right side of the plate.  Close the microwave.	NOT_SUPPORTED
+Go right and then turn to the right to face the counter left of the sink.	MOVE_RIGHT
+Pick the tomato up from the counter.	GRASP
+Turn around and face the counter to the left where the bread is.	MOVE_BACK
+Turn right and go stand near the sink.	MOVE_RIGHT
+Pick up the tomato to the left of the sink.	GRASP
+Turn around and go to the microwave.	MOVE_BACK
+take a few steps forward and turn to the right and go to the counter top and turn to the right	MOVE_FORWARD
+pick up the tomato from the counter top	GRASP
+turn to the left twice and go to the front of the microwave oven and turn to the right	MOVE_LEFT
+open the microwave oven's door and put the tomato in the microwave and close the door	NOT_SUPPORTED
+Turn to your left and walk up to the kitchen sink.	MOVE_LEFT
+Pick up the tomato that is sitting to the left of the sink basin.	GRASP
+Turn around and walk forward until you reach the microwave.	MOVE_BACK
+Place the tomato on the left side of the plate that is in the microwave and close the door.	RELEASE
+Move to the kitchen sink	MOVE_FORWARD
+Pick up the tomato on the counter to the left of the sink	GRASP
+Carry the tomato to the shelf above the dish washer	TRANSPORT
+Place the tomato in the microwave above the dishwasher	RELEASE
+Turn to your left so you are facing the kitchen sink	MOVE_LEFT
+Pick up a tomato off of the draining board	GRASP
+Turn to your left and then turn right to face the microwave	MOVE_LEFT
+Put the tomato in the microwave and then close the door	RELEASE
+Turn to your right and walk across the kitchen to the counter between the refrigerator and the sink on your right.	MOVE_RIGHT
+Open the cabinet just below the coffee maker, and pull out the glass pitcher.	NOT_SUPPORTED
+Go the the refrigerator on your left.	MOVE_LEFT
+Place the pitcher on the left, top shelf of the refrigerator, in front of the tomato.	RELEASE
+Turn right and face the counter on the right just before the fridge.	MOVE_RIGHT
+Open the lower left cabinet under the coffee maker, pick up the clear bottle inside and close the door.	NOT_SUPPORTED
+Turn left and walk to the black fridge on your right.	MOVE_LEFT
+Put the bottle inside the fridge on the top shelf in front of the left tomato and close the door.	RELEASE
+Go right and then turn right to face the counter to the left of the sink.	MOVE_RIGHT
+Open the lower cupboard, below the coffee pot on the counter and take out the vase,	NOT_SUPPORTED
+Go left and turn to face the fridge.	MOVE_LEFT
+Put the vase in the fridge and shut the door.	RELEASE
+Move forward a few feet, turn right to face the sink.	MOVE_FORWARD
+Pick up the vase on the counter behind the sink.	GRASP
+Bring the vase to the fridge on the left.	TRANSPORT
+Put the vase in the fridge.	RELEASE

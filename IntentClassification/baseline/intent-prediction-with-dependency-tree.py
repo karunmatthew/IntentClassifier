@@ -1,15 +1,27 @@
+# This solution does not have any training phase as it uses a set of generic
+# rules to perform the intent classification
+
+
 import spacy
 
 # INPUT_FILE = "outfile1"
-INPUT_FILE = "outfile_pickup_simple_train"
+
+# Provide the path of the input file
+# TODO Currently it is tab delimited, it may change to JSON in the near future
+INPUT_FILE = '../data-train/outfile_pickup_simple_train_unique'
 READ = "r"
+# any two documents whose spacy's document similarity score is greater than
+# this value is considered as a match
+SIMILARITY_THRESHOLD = 0.6
 
-
-# load the spacy english model
+# load the spacy's english model
 nlp = spacy.load("en_core_web_lg")
 
+# load the file that contains the intents to classify
 file = open(INPUT_FILE, READ)
 
+# domain specific actions are listed here
+# this is to be manually compiled
 actions = {'pick': 'GRASP',
            'move': 'MOVE_FORWARD',
            'take': 'GRASP',
@@ -17,8 +29,6 @@ actions = {'pick': 'GRASP',
            'place': 'RELEASE',
            'put': 'RELEASE',
            }
-
-# walk
 
 complex_actions = {
     'take to': 'TRANSPORT',
@@ -30,27 +40,42 @@ complex_actions = {
     'turn on': 'NOT_SUPPORTED'
 }
 
+# the all_actions dict will store both kinds of actions
+# TODO In the future distinction between actions and complex actions may
+#      be removed
 all_actions = {}
 all_actions.update(actions)
 all_actions.update(complex_actions)
 
 
 # returns more details for a particular identified intent
+# it returns the words that are connected to the passed verb in the
+# dependency tree. The connected words usually will be adverbs
 def get_intent_details(doc, verb, verb_index):
     adverb = ''
     adposition = ''
     for token in doc:
-        if token.dep_ == 'advmod' and token.head.text == verb and token.head.i == verb_index and adverb == '':
+        if token.dep_ == 'advmod' and token.head.text == verb and \
+                token.head.i == verb_index and adverb == '':
             adverb = token.text
-        elif token.pos_ == 'ADP' and token.head.text == verb and token.head.i == verb_index and adposition == '':
+        elif token.pos_ == 'ADP' and token.head.text == verb and \
+                token.head.i == verb_index and adposition == '':
             adposition = token.text
-        elif token.pos_ == 'ADV' and token.head.text == verb and token.head.i == verb_index and adverb == '':
+        elif token.pos_ == 'ADV' and token.head.text == verb and \
+                token.head.i == verb_index and adverb == '':
             adverb = token.text
 
     return adverb, adposition
 
 
 # pick the best intend from the list of possible intends
+# if the verb along with the adverb directly matches the keys of the complex
+# action then the corresponding action is returned as intent
+# if there is no complex action match, we check for normal action match.
+# if there is no complex and normal action match, then we use spacy's document
+# representation that uses word embeddings of each contained token to find
+# the similarity between the passed verb phrase and the keys of the all_actions
+# dict, and return the one with the highest similarity score
 def get_intent_class(verb, adverb, adposition):
     verb = verb.strip().lower()
     verb_with_adverb = verb + ' ' + adverb.strip().lower()
@@ -84,36 +109,16 @@ def get_most_similar_action(verb):
             most_similar_action = action
             most_similar_action_score = score
 
-    print("SIM SCORE :::: ", most_similar_action_score, '  ', most_similar_action)
+    print("SIM SCORE :::: ", most_similar_action_score, '  ',
+          most_similar_action)
     if most_similar_action_score > 0.6:
         return all_actions[most_similar_action]
     else:
         return 'NOT_SUPPORTED'
 
 
-def classify_intent():
-    count = 0.0
-    correct = 0.0
-    for line in file:
-        count += 1
-        if count > 2000:
-            break
-        line = line.strip()
-        result = classify_intent_from_command(line)
-        if result:
-            correct += 1
-
-    print('Accuracy :: ', correct/count)
-    print('Correct  :: ', correct)
-    print('Total    :: ', count)
-
-
-def classify_intent_from_command(data):
-    print(data)
-    cols = data.split('\t')
-    line = cols[0]
-    print(line)
-    tag = cols[1]
+# returns the main intent for the passed command sentence
+def get_intent_for_command(line):
     doc = nlp(line)
     root_verbs = []
     root_verb_indices = []
@@ -121,7 +126,8 @@ def classify_intent_from_command(data):
     verb_indices = []
 
     for token in doc:
-        # print(token.text, ' ', token.pos_, ' ', token.dep_, ' ', token.head.text)
+        # print(token.text, ' ', token.pos_, ' ',
+        # token.dep_, ' ', token.head.text)
         if token.dep_ == 'ROOT' and token.pos_ == 'VERB':
             root_verbs.append(token.text)
             root_verb_indices.append(token.i)
@@ -135,12 +141,14 @@ def classify_intent_from_command(data):
     # print(verb_indices)
     main_intent = ''
     for root_verb, root_verb_index in zip(root_verbs, root_verb_indices):
-        root_adverb, root_adposition = get_intent_details(doc, root_verb, root_verb_index)
-        print('MAIN INTENT --- ', root_verb, ' ', root_adverb, ' ', root_adposition)
+        root_adverb, root_adposition = get_intent_details(doc, root_verb,
+                                                          root_verb_index)
+        print('MAIN INTENT --- ', root_verb, ' ', root_adverb, ' ',
+              root_adposition)
         if main_intent == '':
-            main_intent = get_intent_class(root_verb, root_adverb, root_adposition)
+            main_intent = get_intent_class(root_verb, root_adverb,
+                                           root_adposition)
         print('MAIN INTENT CLASS --- ', main_intent)
-
     if len(root_verbs) > 1:
         print('Compound sentence')
     if len(verbs) > 0:
@@ -154,6 +162,19 @@ def classify_intent_from_command(data):
 
             print('OTHER INTENT --- ', verb, ' ', adverb, ' ', adposition)
             print('OTHER INTENT CLASS --- ', other_intent)
+    return main_intent
+
+
+# checks if the predicted intent for a passed command matches the actual intent
+# the command and the actual intent are passed in as input in a tab separated
+# format
+def classify_intent_for_test_record(data):
+    print(data)
+    cols = data.split('\t')
+    line = cols[0]
+    tag = cols[1]
+
+    main_intent = get_intent_for_command(line)
 
     print("ACTUAL CLASS :: ", tag)
     if tag == main_intent:
@@ -167,7 +188,24 @@ def classify_intent_from_command(data):
         return False
 
 
+def classify_intent(is_limit=False, limit=2000):
+    count = 0.0
+    correct = 0.0
+    for line in file:
+        count += 1
+        if is_limit and count > limit:
+            break
+        line = line.strip()
+        result = classify_intent_for_test_record(line)
+        if result:
+            correct += 1
+
+    print('Accuracy :: ', correct / count)
+    print('Correct  :: ', correct)
+    print('Total    :: ', count)
+
+
 classify_intent()
-# classify_intent_from_command('take a step to your left')
+# get_intent_for_command('take a step to your left')
 
 file.close()
