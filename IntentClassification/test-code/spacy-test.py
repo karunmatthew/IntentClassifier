@@ -1,3 +1,8 @@
+# This file just documents the various features of
+# spacy NLP. It also acts as a place to test out
+# the various features of spacy
+
+
 from spacy.lang.en import English
 import spacy
 from spacy.matcher.matcher import Matcher
@@ -5,7 +10,7 @@ from spacy.matcher.matcher import Matcher
 nlp = English()
 
 # provide a document here
-doc = nlp("I three 1990")
+doc = nlp("I three 4000")
 
 # -------------------LEXICAL ATTRIBUTES-----------------------------------------
 # ------------------------------------------------------------------------------

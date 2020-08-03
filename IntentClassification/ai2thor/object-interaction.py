@@ -1,3 +1,8 @@
+# This is a test class
+# This is an example program where the agent is made to
+# interact with the environment
+
+
 from ai2thor.controller import Controller
 controller = Controller(scene='FloorPlan28', gridSize=0.25)
 

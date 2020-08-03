@@ -1,3 +1,6 @@
+# These are test classes that were to used to check if the ai2thor was properly installed
+# This program tries to make the agent take a series of steps
+
 from ai2thor.controller import Controller
 import time
 
