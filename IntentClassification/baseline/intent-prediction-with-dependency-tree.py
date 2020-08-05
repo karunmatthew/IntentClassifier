@@ -3,6 +3,7 @@
 
 
 import spacy
+from sklearn.metrics import precision_recall_fscore_support
 
 # INPUT_FILE = "outfile1"
 
@@ -57,12 +58,15 @@ def get_intent_details(doc, verb, verb_index):
     for token in doc:
         if token.dep_ == 'advmod' and token.head.text == verb and \
                 token.head.i == verb_index and adverb == '':
+            print('advmod :::::::::::::::::: ', token.text)
             adverb = token.text
         elif token.pos_ == 'ADP' and token.head.text == verb and \
                 token.head.i == verb_index and adposition == '':
+            print('ADP :::::::::::::::::: ', token.text)
             adposition = token.text
         elif token.pos_ == 'ADV' and token.head.text == verb and \
                 token.head.i == verb_index and adverb == '':
+            print('ADV :::::::::::::::::: ', token.text)
             adverb = token.text
 
     return adverb, adposition
@@ -179,27 +183,44 @@ def classify_intent_for_test_record(data):
     print("ACTUAL CLASS :: ", tag)
     if tag == main_intent:
         print('MATCH\n')
-        return True
+        return True, main_intent, tag
     # temporarily not considering unsupported tags
     # elif tag == 'NOT_SUPPORTED':
     #    return True
     else:
         print('NOT MATCH\n')
-        return False
+        return False, main_intent, tag
 
 
 def classify_intent(is_limit=False, limit=2000):
     count = 0.0
     correct = 0.0
+
+    predicted_tags = []
+    actual_tags = []
+
     for line in file:
         count += 1
         if is_limit and count > limit:
             break
         line = line.strip()
-        result = classify_intent_for_test_record(line)
+        result, predicted_tag, actual_tag = classify_intent_for_test_record(
+            line)
+        predicted_tags.append(predicted_tag.strip())
+        actual_tags.append(actual_tag.strip())
+
         if result:
             correct += 1
 
+    print(precision_recall_fscore_support(actual_tags, predicted_tags,
+                                          average='macro'))
+    print(precision_recall_fscore_support(actual_tags, predicted_tags,
+                                          average=None,
+                                          labels=['MOVE_LEFT', 'MOVE_RIGHT',
+                                                  'MOVE_BACK', 'MOVE_FORWARD',
+                                                  'RELEASE', 'GRASP',
+                                                  'TRANSPORT',
+                                                  'NOT_SUPPORTED']))
     print('Accuracy :: ', correct / count)
     print('Correct  :: ', correct)
     print('Total    :: ', count)

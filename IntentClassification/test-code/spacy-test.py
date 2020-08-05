@@ -1,8 +1,7 @@
 # This file just documents the various features of
 # spacy NLP. It also acts as a place to test out
 # the various features of spacy
-
-
+from spacy import displacy
 from spacy.lang.en import English
 import spacy
 from spacy.matcher.matcher import Matcher
@@ -34,12 +33,33 @@ span = doc[1:4]
 # load the small english model
 nlp = spacy.load("en_core_web_lg")
 
-doc = nlp("take a step to your left")
+doc = nlp("turn right after walking forward two steps")
 root_verb = ''
 for token in doc:
     print(token.text, ' ', token.pos_, ' ', token.dep_, ' ', token.head.text)
     if token.dep_ == 'ROOT':
         root_verb = token.text
+
+print("CHUNKS ------------------- ")
+for chunk in doc.noun_chunks:
+    print(chunk.text, chunk.root.text, chunk.root.dep_,
+          chunk.root.head.text)
+
+
+# Finding a verb with a subject from below — good
+verbs = set()
+for possible_subject in doc:
+    if possible_subject.dep == 'nsubj' and possible_subject.head.pos == 'VERB':
+        verbs.add(possible_subject.head)
+
+print('verbs ::: ', verbs)
+
+print('sentences')
+for sent in doc.sents:
+    print(sent.text)
+
+displacy.render(doc, style="dep")
+
 
 print('root ::', root_verb)
 
@@ -49,8 +69,10 @@ for ent in doc.ents:
     print(ent.text, ' ', ent.label_)
 
 # spacy explain function to define spacy notations
-print(spacy.explain("ADV"))
-
+print("EXPLANATION  :: ", spacy.explain("ADP"))
+print("EXPLANATION  :: ", spacy.explain("advmod"))
+print("EXPLANATION  :: ", spacy.explain("pcomp"))
+print("EXPLANATION  :: ", spacy.explain("ADP"))
 # --------------------------------------------
 # ---------  MATCHER -------------------------
 
@@ -73,7 +95,6 @@ print('-------------------------------------')
 # ---------WORD SIMILARITY--------------------
 
 
-
 from spacy.tokens import Doc, Span, Token
 
 doc1 = nlp("put the cup from the counter")
@@ -84,7 +105,6 @@ token2 = doc2[0]
 
 print(doc1.similarity(doc2))
 print(token1.similarity(token2))
-
 
 # ----- SPACY HASH REPRESENTATION FOR STRINGS--------
 

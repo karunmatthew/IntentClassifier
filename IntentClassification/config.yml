@@ -1,22 +1,39 @@
 # Configuration for Rasa NLU.
 # https://rasa.com/docs/rasa/nlu/components/
 language: en
+
 pipeline:
-  - name: WhitespaceTokenizer
-  - name: RegexFeaturizer
-  - name: CRFEntityExtractor
-  - name: LexicalSyntacticFeaturizer
-  - name: CountVectorsFeaturizer
-  - name: CountVectorsFeaturizer
-    analyzer: "char_wb"
-    min_ngram: 1
-    max_ngram: 4
-  - name: DIETClassifier
-    epochs: 100
-    entity_recognition: False
-  - name: EntitySynonymMapper
-  - name: ResponseSelector
-    epochs: 100
+- name: ConveRTTokenizer
+  intent_tokenization_flag: True     # added extra for multi intent
+  intent_split_symbol: +
+- name: ConveRTFeaturizer
+- name: RegexFeaturizer
+- name: CRFEntityExtractor
+- name: LexicalSyntacticFeaturizer
+- name: EntitySynonymMapper          # doesnt give any performance improvement
+- name: DIETClassifier
+  epochs: 300
+  entity_recognition: False
+- name: EntitySynonymMapper
+- name: ResponseSelector
+  epochs: 100
+
+#pipeline:
+#  - name: WhitespaceTokenizer
+#  - name: RegexFeaturizer
+#  - name: CRFEntityExtractor
+#  - name: LexicalSyntacticFeaturizer
+#  - name: CountVectorsFeaturizer
+#  - name: CountVectorsFeaturizer
+#    analyzer: "char_wb"
+#    min_ngram: 1
+#    max_ngram: 4
+#  - name: DIETClassifier
+#    epochs: 100
+#    entity_recognition: False
+#  - name: EntitySynonymMapper
+#  - name: ResponseSelector
+#    epochs: 100
 
 # Configuration for Rasa Core.
 # https://rasa.com/docs/rasa/core/policies/

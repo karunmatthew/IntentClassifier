@@ -8,8 +8,11 @@
 import requests
 import json
 
+from sklearn.metrics import precision_recall_fscore_support
+
 RASA_SERVER = 'http://localhost:5005/model/parse'
-TEST_FILE_PATH = '/home/karun/PycharmProjects/IntentClassification/outfile_pickup_simple_train'
+TEST_FILE_PATH = '/home/karun/PycharmProjects/IntentClassification/data-train' \
+                 '/outfile_pickup_simple_test_multi'
 READ = 'r'
 
 headers = {
@@ -21,6 +24,10 @@ def read_test_data(file_path):
     file = open(file_path, READ)
     count = 0.0
     correct = 0.0
+
+    predicted_tags = []
+    actual_tags = []
+
     for line in file:
         count += 1
         cols = line.split('\t')
@@ -37,6 +44,9 @@ def read_test_data(file_path):
         print(intent, ' ', confidence)
         print(tag, '\n')
 
+        predicted_tags.append(intent.strip())
+        actual_tags.append(tag.strip())
+
         if intent.strip() == tag:
             correct += 1
         #elif tag == 'NOT_SUPPORTED':
@@ -49,6 +59,16 @@ def read_test_data(file_path):
     print('Accuracy :: ', correct/count)
     print('Correct  :: ', correct)
     print('Total    :: ', count)
+
+    print(precision_recall_fscore_support(actual_tags, predicted_tags,
+                                          average='macro'))
+    print(precision_recall_fscore_support(actual_tags, predicted_tags,
+                                          average=None,
+                                          labels=['MOVE_LEFT', 'MOVE_RIGHT',
+                                                  'MOVE_BACK', 'MOVE_FORWARD',
+                                                  'RELEASE', 'GRASP',
+                                                  'TRANSPORT',
+                                                  'NOT_SUPPORTED']))
 
 
 def create_RASA_training_set(file_path, out_file_path):
@@ -68,8 +88,9 @@ def create_RASA_training_set(file_path, out_file_path):
         json.dump(json_data, outfile)
 
 
-TRAINING_INPUT_FILE = '/home/karun/PycharmProjects/IntentClassification/outfile1'
-RASA_OUTFILE = '/home/karun/PycharmProjects/IntentClassification/data/nlu.json'
+TRAINING_INPUT_FILE = '/home/karun/PycharmProjects/IntentClassification/data' \
+                      '-train/outfile_pickup_simple_train_unique_multi'
+RASA_OUTFILE = '/home/karun/PycharmProjects/IntentClassification/data/nlu1.json'
 
 read_test_data(TEST_FILE_PATH)
-# create_RASA_training_set(TRAINING_INPUT_FILE, RASA_OUTFILE)
+#create_RASA_training_set(TRAINING_INPUT_FILE, RASA_OUTFILE)

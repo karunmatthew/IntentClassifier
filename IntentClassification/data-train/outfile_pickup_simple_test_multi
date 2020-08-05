@@ -1,0 +1,31 @@
+pick up the tomato from the counter top	GRASP
+turn to the left twice and go to the front of the microwave oven and turn to the right	MOVE_LEFT+MOVE_LEFT+MOVE_FORWARD+MOVE_RIGHT
+open the microwave oven's door and put the tomato in the microwave and close the door	NOT_SUPPORTED
+Turn to your left and walk up to the kitchen sink.	MOVE_LEFT+MOVE_FORWARD
+Pick up the tomato that is sitting to the left of the sink basin.	GRASP
+Turn around and walk forward until you reach the microwave.	MOVE_BACK+MOVE_FORWARD
+Place the tomato on the left side of the plate that is in the microwave and close the door.	RELEASE
+Move to the kitchen sink	MOVE_FORWARD
+Pick up the tomato on the counter to the left of the sink	GRASP
+Carry the tomato to the shelf above the dish washer	TRANSPORT
+Place the tomato in the microwave above the dishwasher	RELEASE
+Turn to your left so you are facing the kitchen sink	MOVE_LEFT+MOVE_RIGHT
+Pick up a tomato off of the draining board	GRASP
+Turn to your left and then turn right to face the microwave	MOVE_LEFT+MOVE_RIGHT
+Put the tomato in the microwave and then close the door	RELEASE
+Turn to your right and walk across the kitchen to the counter between the refrigerator and the sink on your right.	MOVE_RIGHT+MOVE_FORWARD
+Open the cabinet just below the coffee maker, and pull out the glass pitcher.	NOT_SUPPORTED
+Go the the refrigerator on your left.	MOVE_LEFT
+Place the pitcher on the left, top shelf of the refrigerator, in front of the tomato.	RELEASE
+Turn right and face the counter on the right just before the fridge.	MOVE_RIGHT
+Open the lower left cabinet under the coffee maker, pick up the clear bottle inside and close the door.	NOT_SUPPORTED
+Turn left and walk to the black fridge on your right.	MOVE_LEFT+MOVE_FORWARD
+Put the bottle inside the fridge on the top shelf in front of the left tomato and close the door.	RELEASE
+Go right and then turn right to face the counter to the left of the sink.	MOVE_RIGHT+MOVE_FORWARD+MOVE_RIGHT
+Open the lower cupboard, below the coffee pot on the counter and take out the vase,	NOT_SUPPORTED
+Go left and turn to face the fridge.	MOVE_LEFT+MOVE_FORWARD
+Put the vase in the fridge and shut the door.	RELEASE
+Move forward a few feet, turn right to face the sink.	MOVE_FORWARD+MOVE_RIGHT
+Pick up the vase on the counter behind the sink.	GRASP
+Bring the vase to the fridge on the left.	TRANSPORT
+Put the vase in the fridge.	RELEASE
