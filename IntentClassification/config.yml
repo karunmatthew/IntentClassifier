@@ -4,16 +4,18 @@ language: en
 
 pipeline:
 - name: ConveRTTokenizer
-  intent_tokenization_flag: True     # added extra for multi intent
+  intent_tokenization_flag: True
   intent_split_symbol: +
+  case_sensitive: False
 - name: ConveRTFeaturizer
 - name: RegexFeaturizer
-- name: CRFEntityExtractor
 - name: LexicalSyntacticFeaturizer
+- name: CRFEntityExtractor
 - name: EntitySynonymMapper          # doesnt give any performance improvement
 - name: DIETClassifier
   epochs: 300
   entity_recognition: False
+  # batch_strategy: balanced        # prevents class imbalance
 - name: EntitySynonymMapper
 - name: ResponseSelector
   epochs: 100
