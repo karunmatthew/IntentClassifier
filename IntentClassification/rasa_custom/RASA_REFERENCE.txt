@@ -1,0 +1,6 @@
+rasa train
+rasa shell
+rasa shell nlu
+rasa run --enable-api -m models/20200819-034204.tar.gz
+
+export PYTHONPATH=/home/karun/PycharmProjects/IntentClassification/rasa_custom/:$PYTHONPATH

@@ -1,4 +1,0 @@
-rasa train
-rasa shell
-rasa shell nlu
-rasa run --enable-api -m models/20200804-224057.tar.gz

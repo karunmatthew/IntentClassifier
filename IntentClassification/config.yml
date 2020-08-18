@@ -2,40 +2,41 @@
 # https://rasa.com/docs/rasa/nlu/components/
 language: en
 
-pipeline:
-- name: ConveRTTokenizer
-  intent_tokenization_flag: True
-  intent_split_symbol: +
-  case_sensitive: False
-- name: ConveRTFeaturizer
-- name: RegexFeaturizer
-- name: LexicalSyntacticFeaturizer
-- name: CRFEntityExtractor
-- name: EntitySynonymMapper          # doesnt give any performance improvement
-- name: DIETClassifier
-  epochs: 300
-  entity_recognition: False
-  # batch_strategy: balanced        # prevents class imbalance
-- name: EntitySynonymMapper
-- name: ResponseSelector
-  epochs: 100
-
 #pipeline:
-#  - name: WhitespaceTokenizer
-#  - name: RegexFeaturizer
-#  - name: CRFEntityExtractor
-#  - name: LexicalSyntacticFeaturizer
-#  - name: CountVectorsFeaturizer
+#- name: ConveRTTokenizer
+#  intent_tokenization_flag: True
+#  intent_split_symbol: +
+#  case_sensitive: False
+#- name: ConveRTFeaturizer
+#- name: RegexFeaturizer
+#- name: LexicalSyntacticFeaturizer
+#- name: CRFEntityExtractor
+#- name: EntitySynonymMapper          # doesnt give any performance improvement
+#- name: DIETClassifier
+#  epochs: 300
+#  entity_recognition: False
+#  # batch_strategy: balanced        # prevents class imbalance
+#- name: EntitySynonymMapper
+#- name: ResponseSelector
+#  epochs: 100
+# - name: ConveRTFeaturizer
+pipeline:
+  - name: custom_rasa_tokenizer.CustomRasaTokenizer
+  - name: custom_rasa_featuriser.CustomRASAFeaturizer
+  - name: custom_rasa_scene_info_featuriser.SceneInfoFeaturiser
+  - name: CRFEntityExtractor
+  - name: LexicalSyntacticFeaturizer
+  - name: CountVectorsFeaturizer
 #  - name: CountVectorsFeaturizer
 #    analyzer: "char_wb"
 #    min_ngram: 1
 #    max_ngram: 4
-#  - name: DIETClassifier
-#    epochs: 100
-#    entity_recognition: False
-#  - name: EntitySynonymMapper
-#  - name: ResponseSelector
-#    epochs: 100
+  - name: DIETClassifier
+    epochs: 100
+    entity_recognition: False
+  - name: EntitySynonymMapper
+  - name: ResponseSelector
+    epochs: 100
 
 # Configuration for Rasa Core.
 # https://rasa.com/docs/rasa/core/policies/

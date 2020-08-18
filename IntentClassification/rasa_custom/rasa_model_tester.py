@@ -12,7 +12,7 @@ from sklearn.metrics import precision_recall_fscore_support
 
 RASA_SERVER = 'http://localhost:5005/model/parse'
 TEST_FILE_PATH = '/home/karun/PycharmProjects/IntentClassification/data-train' \
-                 '/outfile_pickup_simple_test_multi'
+                 '/outfile_pickup_simple_test'
 READ = 'r'
 
 headers = {
@@ -69,23 +69,6 @@ def read_test_data(file_path):
                                                   'RELEASE', 'GRASP',
                                                   'TRANSPORT',
                                                   'NOT_SUPPORTED']))
-
-
-def create_RASA_training_set(file_path, out_file_path):
-    training_file = open(file_path, READ)
-    intents = []
-    for line in training_file:
-        cols = line.split('\t')
-        command = cols[0]
-        tag = cols[1].strip()
-        intent_json = {'text': command, 'intent': tag}
-        intents.append(intent_json)
-
-    common_examples_json = {'common_examples': intents}
-    json_data = {'rasa_nlu_data': common_examples_json}
-
-    with open(out_file_path, 'w') as outfile:
-        json.dump(json_data, outfile)
 
 
 TRAINING_INPUT_FILE = '/home/karun/PycharmProjects/IntentClassification/data' \
