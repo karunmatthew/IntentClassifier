@@ -9,18 +9,12 @@ import tensorflow as tf
 
 
 class CustomRasaTokenizer(WhitespaceTokenizer):
-    """Tokenizer using ConveRT model.
-
-    Loads the ConveRT(https://github.com/PolyAI-LDN/polyai-models#convert)
-    model from TFHub and computes sub-word tokens for dense
-    featurizable attributes of each message object.
-    """
 
     defaults = {
         # Flag to check whether to split intents
         "intent_tokenization_flag": False,
         # Symbol on which intent should be split
-        "intent_split_symbol": "_",
+        "intent_split_symbol": "+",
         # Text will be tokenized with case sensitive as default
         "case_sensitive": True,
     }
@@ -29,7 +23,7 @@ class CustomRasaTokenizer(WhitespaceTokenizer):
         """Construct a new tokenizer using the WhitespaceTokenizer framework."""
         print("LOADING CUSTOM RASA TOKENIZER")
         super().__init__(component_config)
-
+        # Load models for ConveRT
         model_url = "http://models.poly-ai.com/convert/v1/model.tar.gz"
         self.module = train_utils.load_tf_hub_model(model_url)
 

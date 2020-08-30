@@ -1,49 +1,47 @@
 import json
-import os
 import copy
+from util.apputil import get_json_file_paths
+from util.alfred_json_parser import get_action_sequence, \
+    get_object_and_receptable, is_of_task_type, get_task_related_objects, \
+    get_floor_plan
 
 # CONSTANTS
-WRITE = "w"
+APPEND = "a"
 JSON = '.json'
 PICK_AND_PLACE = "pick_and_place_simple"
-OUT_FILE = "train_file_v2"
-FOLDER_PATH = "/home/karun/Research_Project/alfred/data/json_feat_2.1.0/"
-NO_OPERATION = 'NoOp'
+TRAINING_SET_FILE = "../data-train/training_set.txt"
+TESTING_SET_FILE = "../data-test/testing_set.txt"
+# FOLDER_PATH = "/home/karun/Research_Project/alfred/data/json_feat_2.1.0/"
+FOLDER_PATH = "/media/karun/My Passport/full_2.1.0/train/"
+
 GOTO_LOCATION = 'GotoLocation'
 PICKUP_ACTION = 'PickupObject'
 PUTDOWN_ACTION = 'PutObject'
 
+# We need to divide the data set into train and test sets
+# We also limit training to a small subset of floor plans
+# to see if the system is able to generalize to different
+# types of environments
+train_floor_plans = []
+test_floor_plans = []
+trial_count = 0
+TRAIN_PERCENT = 0.60
+floor_plans = {}
+
 agent_data = {}
 agent_init_data = {}
 
+# TODO REMOVE
+# Collecting statistics
+a_seq_total = 0.0
+a_seq_count = 0.0
+files_total = 0.0
+task_desc_total = 0.0
+multi_desc_count = 0.0
+high_desc_count = 0.0
+
 
 # FOLDER_PATH = "/media/karun/My Passport/full_2.1.0/train/"
-
-
-# returns a list of all json file paths within the provided folder path
-def get_json_file_paths(folder_path):
-    file_paths = []
-    for path, subdirs, files in os.walk(folder_path):
-        for name in files:
-            extension = os.path.splitext(name)[1]
-            if extension == JSON:
-                file_path = os.path.join(path, name)
-                file_paths.append(file_path)
-
-    return file_paths
-
-
-# returns true if the trial is of the passed task type
-def is_of_task_type(json_object, filter_task_type):
-    return True
-    if filter_task_type == '':
-        return True
-    elif 'task_type' in json_object and \
-            json_object['task_type'] == filter_task_type:
-        return True
-    else:
-        return False
-
 
 # parses the json file
 def init_agent_data(json_object):
@@ -64,60 +62,6 @@ def update_agent_data(location_string):
                               0.0, 0.0]
 
 
-# get the action sequence
-def get_action_sequence(json_object):
-    high_pddl = json_object['plan']['high_pddl']
-    action_sequence = []
-    for action in high_pddl:
-        operation = action['discrete_action']['action']
-        if not operation == NO_OPERATION:
-            action_sequence.append(operation)
-    return action_sequence
-
-
-# returns the list of objects required for carrying out the task
-def get_task_related_objects(json_object):
-    related_objects = []
-    high_pddl = json_object['plan']['high_pddl']
-    for action in high_pddl:
-        related_object, receptable_object = get_object_and_receptable(action)
-        if not related_object is None and not related_object in related_objects:
-            related_objects.append(related_object)
-        if not receptable_object is None and not receptable_object in \
-                                                 related_objects:
-            related_objects.append(receptable_object)
-    return related_objects
-
-
-# extracts the object and receptable object if present from a high_pddl_action
-def get_object_and_receptable(action):
-    planner_action = action['planner_action']
-    related_object = None
-    receptable_object = None
-    if 'objectId' in planner_action:
-        related_object_data = planner_action['objectId'].split('|')
-        related_object = {
-            'entityName': related_object_data[0],
-            'relevant': 1,
-            'position': [float(related_object_data[1]),
-                         float(related_object_data[2]),
-                         float(related_object_data[3])]
-        }
-
-    if 'receptacleObjectId' in planner_action:
-        related_object_data = planner_action['receptacleObjectId'].split(
-            '|')
-        receptable_object = {
-            'entityName': related_object_data[0],
-            'relevant': 1,
-            'position': [float(related_object_data[1]),
-                         float(related_object_data[2]),
-                         float(related_object_data[3])]
-        }
-
-    return related_object, receptable_object
-
-
 # when a high-idx is passed, it returns the corresponding
 # high_pddl action with the same index
 def get_corresponding_high_pddl_action(high_idx, json_object):
@@ -127,13 +71,14 @@ def get_corresponding_high_pddl_action(high_idx, json_object):
 
 # given a list of all objects related to a task, it is required to find the
 # subset of items relevant for a particular high_desc
-def get_relevant_high_desc_objects(task_objects, json_object, high_idx,
-                                   high_desc_command):
+def get_relevant_high_desc_objects(task_objects, json_object, high_idx):
     # the list of all identified objects for the task
     high_desc_objects = copy.deepcopy(task_objects)
     high_pddl_action = get_corresponding_high_pddl_action(high_idx, json_object)
+
     related_object, receptable_object = get_object_and_receptable(
         high_pddl_action)
+
     action_args = []
     if 'args' in high_pddl_action['discrete_action']:
         action_args = high_pddl_action['discrete_action']['args']
@@ -150,24 +95,23 @@ def get_relevant_high_desc_objects(task_objects, json_object, high_idx,
                 not high_desc_object == related_object and \
                 not high_desc_object == receptable_object:
             high_desc_object['relevant'] = 0
+
     return high_desc_objects
 
 
-def deduplicate_scene_description(scene_description):
-    agent_state = []
-
-    # for scene
-
-    return scene_description
-
-
+# when creating multi-descs we merge scene descriptions of each of the high-desc
+# an object is made relevant if it is relevant in any of the high descs
 def merge_scene_descriptions(scene_description, scene):
-
     match = False
     for a_scene in scene_description:
         if a_scene['entityName'] == scene['entityName'] \
                 and a_scene['position'] == scene['position']:
-            a_scene['relevant']  = a_scene['relevant'] or scene['relevant']
+            # this object has already been added, so no need to add again
+            match = True
+            # if the object has become relevant, make it relevant
+            a_scene['relevant'] = a_scene['relevant'] or scene['relevant']
+        if a_scene['entityName'] == scene['entityName'] \
+                and a_scene['entityName'] == 'agent':
             match = True
 
     if not match:
@@ -185,23 +129,28 @@ def get_merged_high_desc(high_descs):
         task_desc.append(high_desc['high_desc'])
         action_sequence.append(high_desc['action_sequence'][0])
         for scene in high_desc['scene_description']:
-            if not scene in scene_description:
+            if scene not in scene_description:
                 merge_scene_descriptions(scene_description, scene)
     multi_desc['high_idx'] = high_idxs
+    multi_desc['assignment_id'] = high_descs[0]['assignment_id']
+    multi_desc['record_type'] = 'multi_desc'
     multi_desc['high_descs'] = task_desc
     multi_desc['action_sequence'] = action_sequence
-    multi_desc['scene_description'] = deduplicate_scene_description(
-        scene_description)
+    multi_desc['scene_description'] = scene_description
     return multi_desc
 
 
+# creates the multi-desc records from the high-desc list
+# if a list of 4 high-descs are passed
+# then the generated multi-desc would be
+# [0,1] [0,1,2] [0,1,2,3] [1,2] [1,2,3] [2,3]
 def get_multi_high_descs(task_high_desc):
     multi_high_desc = []
     for i in range(len(task_high_desc)):
-        temp = []
-        for j in range(i+1, len(task_high_desc)):
-            temp.append(task_high_desc[j])
-            multi_high_desc.append(get_merged_high_desc(temp))
+        for j in range(i + 1, len(task_high_desc)):
+            # choose different combinations of high-desc in order
+            temp = task_high_desc[i: j + 1]
+            multi_high_desc.append(copy.deepcopy(get_merged_high_desc(temp)))
 
     return multi_high_desc
 
@@ -211,68 +160,190 @@ def parse_json_file(file):
     high_descs_data = []
     multi_descs_data = []
 
+    is_training_record = False
+
     with open(file) as json_file:
+
         json_object = json.load(json_file)
         language_annotations = json_object['turk_annotations']['anns']
         task_id = json_object['task_id']
+
         if is_of_task_type(json_object, PICK_AND_PLACE):
+
+            # identify the floor plan and decide whether this file data
+            # is to be added to training set or testing set
+            floor_plan = get_floor_plan(json_object)
+            if floor_plan in train_floor_plans:
+                is_training_record = True
+
+            # iterate through each language annotation of different Turks
             for lang_ann in language_annotations:
                 task_high_desc = []
                 # initialize the agent location at the start of every task
                 init_agent_data(json_object)
                 action_sequences = get_action_sequence(json_object)
+
+                # --------------------- TASK-DESC ------------------------ #
                 task_desc_data = {'task_desc': lang_ann["task_desc"].strip(),
-                                  'high-idx': -1,
+                                  'high-idx': [-1],
+                                  'record_type': 'task_desc',
                                   'task_id': task_id,
                                   'action_sequence': action_sequences}
+
                 task_related_objects = get_task_related_objects(json_object)
                 task_desc_data['scene_description'] = [copy.deepcopy(
                     agent_data)] + task_related_objects
+                # -------------------------------------------------------- #
 
                 count = 0
-
+                # get the high-descs (sub-tasks) for the task
                 high_descs = lang_ann["high_descs"]
                 assignment_id = lang_ann["assignment_id"]
-                for high_desc in high_descs:
-                    # Update agents location after the high_desc is created
-                    if action_sequences[count] == PICKUP_ACTION:
-                        update_agent_data(json_object['plan']['high_pddl']
-                                          [count]['planner_action']['objectId'])
-                    elif action_sequences[count] == PUTDOWN_ACTION:
-                        update_agent_data(json_object['plan']['high_pddl']
-                                          [count]['planner_action']
-                                          ['receptacleObjectId'])
 
+                # --------------------- HIGH-DESC ------------------------ #
+                for high_desc in high_descs:
+                    # certain actions signal that the agent's location has
+                    # changed and requires it to be updated
+                    update_agent_on_action(action_sequences, count, json_object)
                     high_desc_data = {
                         'high_idx': [count],
                         'assignment_id': assignment_id,
+                        'record_type': 'high_desc',
                         'high_desc': high_desc.strip(),
+                        'parent_task_desc': lang_ann["task_desc"].strip(),
                         'action_sequence': [action_sequences[count]],
                         'scene_description': [copy.deepcopy(agent_data)] +
                                              get_relevant_high_desc_objects(
                                                  task_related_objects,
-                                                 json_object, count,
-                                                 high_desc.strip())
+                                                 json_object, count)
                     }
-                    task_high_desc.append(high_desc_data)
+                    # append to the list of high-descs that is maintained
                     high_descs_data.append(high_desc_data)
+                    # maintain a separate list for creating multi-desc
+                    task_high_desc.append(copy.deepcopy(high_desc_data))
                     count = count + 1
-                multi_descs_data.append(get_multi_high_descs(task_high_desc))
+                # -------------------------------------------------------- #
+
+                # create multi descs by passing all of the high-descs
+                multi_descs_data = multi_descs_data + \
+                                   get_multi_high_descs(task_high_desc)
                 task_descs_data.append(task_desc_data)
-        print({'tasks': task_descs_data})
-        print({'high_descs': high_descs_data})
-        print({'multi_high_descs': multi_descs_data})
+
+            write_record(high_descs_data, multi_descs_data, task_descs_data,
+                         is_training_record)
 
 
-outfile = open(OUT_FILE, WRITE)
-# files = get_json_file_paths(FOLDER_PATH)
-# for file_path in files:
-#    parse_json_file(file_path)
-# parse_json_file('/home/karun/Research_Project/Docs/original_alfred[1].json')
-parse_json_file('/home/karun/Research_Project/alfred/data/json_feat_2.1.0'
-                '/pick_and_place_simple-Statue-None-CoffeeTable-228'
-                '/trial_T20190906_185451_580211/pp/ann_0.json')
-# parse_json_file('/home/karun/Research_Project/alfred/data/json_feat_2.1.0'
-#                '/pick_and_place_with_movable_recep-TissueBox-Plate'
-#                '-DiningTable-203/trial_T20190909_134437_433211/pp/ann_0.json')
-outfile.close()
+def write_record(high_descs_data, multi_descs_data, task_descs_data,
+                 is_training_record):
+    print_records(high_descs_data, multi_descs_data, task_descs_data)
+    records = task_descs_data + high_descs_data + multi_descs_data
+
+    if is_training_record:
+        out_file = open(TRAINING_SET_FILE, APPEND)
+    else:
+        out_file = open(TESTING_SET_FILE, APPEND)
+
+    for record in records:
+        out_file.write(json.dumps(record) + '\n')
+
+    out_file.close()
+
+
+def print_records(high_descs_data, multi_descs_data, task_descs_data):
+
+    # print out the data
+    # print({'tasks': task_descs_data})
+    # print({'high_descs': high_descs_data})
+    # print({'multi_high_descs': multi_descs_data})
+
+    # print out the counts
+    # print('tasks       :', len(task_descs_data))
+    # print('high_descs  :', len(high_descs_data))
+    # print('multi_descs :', len(multi_descs_data))
+
+    # maintain statistics
+    global high_desc_count, multi_desc_count, task_desc_total
+    high_desc_count = high_desc_count + len(high_descs_data)
+    multi_desc_count = multi_desc_count + len(multi_descs_data)
+    task_desc_total = task_desc_total + len(task_descs_data)
+
+
+def update_agent_on_action(action_sequences, count, json_object):
+    # The agents location is updated to the location of the
+    # object that is picked when agent performs a pickup action
+    if action_sequences[count] == PICKUP_ACTION:
+        update_agent_data(json_object['plan']['high_pddl']
+                          [count]['planner_action']['objectId'])
+    # The agents location is updated the location of the
+    # receptable when the agent performs a put-down action
+    elif action_sequences[count] == PUTDOWN_ACTION:
+        update_agent_data(json_object['plan']['high_pddl']
+                          [count]['planner_action']
+                          ['receptacleObjectId'])
+
+
+def generate_training_data(folder_path):
+    # get the list of all json files in the passed folder path
+    files = get_json_file_paths(folder_path)
+    for file_path in files:
+        if PICK_AND_PLACE in file_path:
+            parse_json_file(file_path)
+
+
+# identify all the different types of floor plans within the training set for
+# the task type PICK_AND_PLACE
+def populate_floor_plans(folder_path):
+    # get the list of all json files in the passed folder path
+    files = get_json_file_paths(folder_path)
+    global files_total
+    for file_path in files:
+        if PICK_AND_PLACE in file_path:
+            files_total = files_total + 1
+            with open(file_path) as json_file:
+                json_object = json.load(json_file)
+                floor_plan = get_floor_plan(json_object)
+                if floor_plan not in floor_plans:
+                    floor_plans[floor_plan] = 1
+                else:
+                    floor_plans[floor_plan] = floor_plans[floor_plan] + 1
+
+
+def collect_statistics(folder_path):
+    # get the list of all json files in the passed folder path
+    files = get_json_file_paths(folder_path)
+    for file_path in files:
+        if PICK_AND_PLACE in file_path:
+            with open(file_path) as json_file:
+                json_object = json.load(json_file)
+                language_annotations = json_object['turk_annotations']['anns']
+                action_sequences = get_action_sequence(json_object)
+                global a_seq_total, a_seq_count
+                a_seq_total = a_seq_total + len(action_sequences)
+                a_seq_count = a_seq_count + 1
+                for lang_ann in language_annotations:
+                    high_descs = lang_ann["high_descs"]
+                    global high_desc_tot, high_desc_count
+                    high_desc_tot = high_desc_tot + len(high_descs)
+                    high_desc_count = high_desc_count + 1
+
+
+populate_floor_plans(FOLDER_PATH)
+print('Unique Floor Plans :', len(floor_plans))
+print('Total Files        :', files_total)
+
+# divide all floorplans between train and test sets
+for plan in floor_plans:
+    trial_count = trial_count + floor_plans[plan]
+    if trial_count / files_total < TRAIN_PERCENT:
+        train_floor_plans.append(plan)
+    else:
+        test_floor_plans.append(plan)
+
+print('Train floor plans  :', len(train_floor_plans))
+print('Test floor plans   :', len(test_floor_plans))
+
+generate_training_data(FOLDER_PATH)
+
+print('Tasks-descs   : ', task_desc_total)
+print('High descs    : ', high_desc_count)
+print('Multi descs   : ', multi_desc_count)

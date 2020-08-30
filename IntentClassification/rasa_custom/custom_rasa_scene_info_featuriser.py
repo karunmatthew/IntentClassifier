@@ -17,15 +17,12 @@ from rasa.nlu.constants import (
 
 
 class SceneInfoFeaturiser(DenseFeaturizer):
-    """Featurizer using transformer based language models.
-
-    Uses the output of HFTransformersNLP component to set the sequence and sentence
-    level representations for dense featurizable attributes of each message object.
-    """
 
     @classmethod
     def required_components(cls) -> List[Type[Component]]:
-        print('SCENE INFO')
+        # Ensuring all the pre-requisites are met
+        # We would be extracting the object and action sequence information
+        # out from the message text in the tokenizer and retrieving it back here
         return [Tokenizer]
 
     def train(
@@ -37,18 +34,14 @@ class SceneInfoFeaturiser(DenseFeaturizer):
 
         for example in training_data.training_examples:
             for attribute in DENSE_FEATURIZABLE_ATTRIBUTES:
-                self._set_lm_features(example, attribute)
-
+                self.extract_environment_features(example, attribute)
 
     def process(self, message: Message, **kwargs: Any) -> None:
-        """Sets the dense features from the language model doc to the incoming
-        message."""
-        self._set_lm_features(message)
+        self.extract_environment_features(message)
 
-    def _set_lm_features(self, message: Message, attribute: Text = TEXT) -> None:
+    def extract_environment_features(self, message: Message, attribute: Text = TEXT) -> None:
 
         sequence_features = []
-
         print(message.get(TOKENS_NAMES[attribute]))
 
         if not message.get(TOKENS_NAMES[attribute]):
@@ -56,7 +49,7 @@ class SceneInfoFeaturiser(DenseFeaturizer):
             return
 
         for token in message.get(TOKENS_NAMES[attribute]):
-            sequence_features.append([1, 2, 3, 4, 5, 6, 7, 8])
+            sequence_features.append([1, 2, 3, 4, 5, 6, 7, 8, 9])
 
         sentence_features = [1, 2, 3, 4, 5, 6, 7, 8]
         features = np.array(sequence_features)
