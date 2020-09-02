@@ -1,7 +1,8 @@
 import os
+import torch
 
 JSON = '.json'
-
+READ = "r"
 
 def get_json_file_paths(folder_path):
     file_paths = []
@@ -13,3 +14,20 @@ def get_json_file_paths(folder_path):
                 file_paths.append(file_path)
 
     return file_paths
+
+
+# read a file and return a list of lines
+def get_data(input_file):
+    file = open(input_file, READ)
+    data = []
+    for line in file:
+        data.append(line.strip())
+    return data
+
+
+def get_default_device():
+    """Pick GPU if available, else CPU"""
+    if torch.cuda.is_available():
+        return torch.device('cuda')
+    else:
+        return torch.device('cpu')

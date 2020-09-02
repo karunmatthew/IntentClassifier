@@ -11,8 +11,8 @@ JSON = '.json'
 PICK_AND_PLACE = "pick_and_place_simple"
 TRAINING_SET_FILE = "../data-train/training_set.txt"
 TESTING_SET_FILE = "../data-test/testing_set.txt"
-# FOLDER_PATH = "/home/karun/Research_Project/alfred/data/json_feat_2.1.0/"
-FOLDER_PATH = "/media/karun/My Passport/full_2.1.0/train/"
+FOLDER_PATH = "/home/karun/Research_Project/alfred/data/json_feat_2.1.0/"
+# FOLDER_PATH = "/media/karun/My Passport/full_2.1.0/train/"
 
 GOTO_LOCATION = 'GotoLocation'
 PICKUP_ACTION = 'PickupObject'
@@ -126,15 +126,15 @@ def get_merged_high_desc(high_descs):
     action_sequence = []
     for high_desc in high_descs:
         high_idxs.append(high_desc['high_idx'][0])
-        task_desc.append(high_desc['high_desc'])
+        task_desc = task_desc + high_desc['desc']
         action_sequence.append(high_desc['action_sequence'][0])
         for scene in high_desc['scene_description']:
             if scene not in scene_description:
                 merge_scene_descriptions(scene_description, scene)
+    multi_desc['record_type'] = 'multi_desc'
+    multi_desc['desc'] = task_desc
     multi_desc['high_idx'] = high_idxs
     multi_desc['assignment_id'] = high_descs[0]['assignment_id']
-    multi_desc['record_type'] = 'multi_desc'
-    multi_desc['high_descs'] = task_desc
     multi_desc['action_sequence'] = action_sequence
     multi_desc['scene_description'] = scene_description
     return multi_desc
@@ -167,8 +167,9 @@ def parse_json_file(file):
         json_object = json.load(json_file)
         language_annotations = json_object['turk_annotations']['anns']
         task_id = json_object['task_id']
+        is_slice_task = json_object['pddl_params']['object_sliced']
 
-        if is_of_task_type(json_object, PICK_AND_PLACE):
+        if is_of_task_type(json_object, PICK_AND_PLACE) and not is_slice_task:
 
             # identify the floor plan and decide whether this file data
             # is to be added to training set or testing set
@@ -184,9 +185,9 @@ def parse_json_file(file):
                 action_sequences = get_action_sequence(json_object)
 
                 # --------------------- TASK-DESC ------------------------ #
-                task_desc_data = {'task_desc': lang_ann["task_desc"].strip(),
-                                  'high-idx': [-1],
-                                  'record_type': 'task_desc',
+                task_desc_data = {'record_type': 'task_desc',
+                                  'desc': [lang_ann["task_desc"].strip()],
+                                  'high_idx': [-1],
                                   'task_id': task_id,
                                   'action_sequence': action_sequences}
 
@@ -206,10 +207,10 @@ def parse_json_file(file):
                     # changed and requires it to be updated
                     update_agent_on_action(action_sequences, count, json_object)
                     high_desc_data = {
+                        'record_type': 'high_desc',
+                        'desc': [high_desc.strip()],
                         'high_idx': [count],
                         'assignment_id': assignment_id,
-                        'record_type': 'high_desc',
-                        'high_desc': high_desc.strip(),
                         'parent_task_desc': lang_ann["task_desc"].strip(),
                         'action_sequence': [action_sequences[count]],
                         'scene_description': [copy.deepcopy(agent_data)] +
@@ -298,14 +299,15 @@ def populate_floor_plans(folder_path):
     global files_total
     for file_path in files:
         if PICK_AND_PLACE in file_path:
-            files_total = files_total + 1
             with open(file_path) as json_file:
                 json_object = json.load(json_file)
-                floor_plan = get_floor_plan(json_object)
-                if floor_plan not in floor_plans:
-                    floor_plans[floor_plan] = 1
-                else:
-                    floor_plans[floor_plan] = floor_plans[floor_plan] + 1
+                if not json_object['pddl_params']['object_sliced']:
+                    files_total = files_total + 1
+                    floor_plan = get_floor_plan(json_object)
+                    if floor_plan not in floor_plans:
+                        floor_plans[floor_plan] = 1
+                    else:
+                        floor_plans[floor_plan] = floor_plans[floor_plan] + 1
 
 
 def collect_statistics(folder_path):
