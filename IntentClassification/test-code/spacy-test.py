@@ -4,9 +4,29 @@
 from spacy import displacy
 from spacy.lang.en import English
 import spacy
+import torch
+import numpy as np
 from spacy.matcher.matcher import Matcher
 
-nlp = English()
+nlp = spacy.load("en_core_web_lg")
+
+doc = nlp("turn right after walking forward two steps")
+
+ss = np.append(doc.vector, [1, 2, 7])
+
+doc_tensor = torch.from_numpy(ss)
+
+print(doc_tensor)
+
+print(doc_tensor.shape)
+
+print(ff)
+
+print(doc.vector)
+print(doc.vector.shape)
+print(torch.from_numpy(doc.vector))
+
+print(ag)
 
 # provide a document here
 doc = nlp("I three 4000")
@@ -34,6 +54,10 @@ span = doc[1:4]
 nlp = spacy.load("en_core_web_lg")
 
 doc = nlp("turn right after walking forward two steps")
+
+print(doc.tensor)
+
+print(a)
 root_verb = ''
 for token in doc:
     print(token.text, ' ', token.pos_, ' ', token.dep_, ' ', token.head.text)

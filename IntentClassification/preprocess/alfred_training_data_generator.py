@@ -1,5 +1,6 @@
 import json
 import copy
+import sys
 from util.apputil import get_json_file_paths
 from util.alfred_json_parser import get_action_sequence, \
     get_object_and_receptable, is_of_task_type, get_task_related_objects, \
@@ -25,7 +26,7 @@ PUTDOWN_ACTION = 'PutObject'
 train_floor_plans = []
 test_floor_plans = []
 trial_count = 0
-TRAIN_PERCENT = 0.60
+TRAIN_PERCENT = 0.10
 floor_plans = {}
 
 agent_data = {}
@@ -170,7 +171,7 @@ def parse_json_file(file):
         is_slice_task = json_object['pddl_params']['object_sliced']
 
         if is_of_task_type(json_object, PICK_AND_PLACE) and not is_slice_task:
-
+            # print(file)
             # identify the floor plan and decide whether this file data
             # is to be added to training set or testing set
             floor_plan = get_floor_plan(json_object)
@@ -192,8 +193,71 @@ def parse_json_file(file):
                                   'action_sequence': action_sequences}
 
                 task_related_objects = get_task_related_objects(json_object)
+
                 task_desc_data['scene_description'] = [copy.deepcopy(
                     agent_data)] + task_related_objects
+                task_descs_data.append(task_desc_data)
+                # -------------------------------------------------------- #
+
+                # -------------------- Object Close to Receptable -------- #
+                if len(action_sequences) == 4 and \
+                        action_sequences[1] == 'PickupObject' and \
+                        action_sequences[2] == 'GotoLocation' and \
+                        action_sequences[3] == 'PutObject':
+                    task_desc_data_GPP = {'record_type': 'task_desc',
+                                          'desc': [lang_ann["task_desc"].strip()],
+                                          'high_idx': [-2],
+                                          'task_id': task_id,
+                                          'action_sequence': ['GotoLocation',
+                                                              'PickupObject',
+                                                              'PutObject']}
+                    GPP_related_objects = copy.deepcopy(get_task_related_objects(json_object))
+                    # update position of receptable as position of object
+                    GPP_related_objects[1]['position'] = GPP_related_objects[0]['position']
+                    task_desc_data_GPP['scene_description'] = [copy.deepcopy(
+                        agent_data)] + GPP_related_objects
+                    task_descs_data.append(task_desc_data_GPP)
+                # -------------------------------------------------------- #
+
+                # -------------------- Agent next to object -------------- #
+                if len(action_sequences) == 4 and \
+                        action_sequences[1] == 'PickupObject' and \
+                        action_sequences[0] == 'GotoLocation':
+                    task_desc_data_PGP = {'record_type': 'task_desc',
+                                          'desc': [lang_ann["task_desc"].strip()],
+                                          'high_idx': [-3],
+                                          'task_id': task_id,
+                                          'action_sequence': ['PickupObject',
+                                                              'GotoLocation',
+                                                              'PutObject']}
+                    PGP_related_objects = copy.deepcopy(get_task_related_objects(json_object))
+                    # update position of agent as that of picked object
+                    PGP_agent_data = copy.deepcopy(agent_data)
+                    PGP_agent_data['position'] = copy.deepcopy(PGP_related_objects[0]['position'])
+                    task_desc_data_PGP['scene_description'] = [PGP_agent_data] + PGP_related_objects
+                    task_descs_data.append(task_desc_data_PGP)
+                # ----------------------------------------------------------------------- #
+
+                # -------------------- Agent next to object and receptable -------------- #
+                if len(action_sequences) == 4 and \
+                        action_sequences[1] == 'PickupObject' and \
+                        action_sequences[2] == 'GotoLocation' and \
+                        action_sequences[3] == 'PutObject' and \
+                        action_sequences[0] == 'GotoLocation':
+                    task_desc_data_PP = {'record_type': 'task_desc',
+                                         'desc': [lang_ann["task_desc"].strip()],
+                                         'high_idx': [-4],
+                                         'task_id': task_id,
+                                         'action_sequence': ['PickupObject',
+                                                             'PutObject']}
+                    PP_related_objects = copy.deepcopy(get_task_related_objects(json_object))
+                    # update position of agent as that of picked object
+                    PP_agent_data = copy.deepcopy(agent_data)
+                    PP_agent_data['position'] = copy.deepcopy(PP_related_objects[0]['position'])
+                    # update position of receptable as position of object
+                    PP_related_objects[1]['position'] = PP_related_objects[0]['position']
+                    task_desc_data_PP['scene_description'] = [PP_agent_data] + PP_related_objects
+                    task_descs_data.append(task_desc_data_PP)
                 # -------------------------------------------------------- #
 
                 count = 0
@@ -228,7 +292,7 @@ def parse_json_file(file):
                 # create multi descs by passing all of the high-descs
                 multi_descs_data = multi_descs_data + \
                                    get_multi_high_descs(task_high_desc)
-                task_descs_data.append(task_desc_data)
+
 
             write_record(high_descs_data, multi_descs_data, task_descs_data,
                          is_training_record)
@@ -251,7 +315,6 @@ def write_record(high_descs_data, multi_descs_data, task_descs_data,
 
 
 def print_records(high_descs_data, multi_descs_data, task_descs_data):
-
     # print out the data
     # print({'tasks': task_descs_data})
     # print({'high_descs': high_descs_data})

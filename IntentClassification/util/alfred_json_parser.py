@@ -38,6 +38,7 @@ def get_object_and_receptable(action):
         related_object_data = planner_action['objectId'].split('|')
         related_object = {
             'entityName': related_object_data[0],
+            'object_type': 'simple',
             'relevant': 1,
             'position': [float(related_object_data[1]),
                          float(related_object_data[2]),
@@ -49,6 +50,7 @@ def get_object_and_receptable(action):
             '|')
         receptable_object = {
             'entityName': related_object_data[0],
+            'object_type': 'receptable',
             'relevant': 1,
             'position': [float(related_object_data[1]),
                          float(related_object_data[2]),

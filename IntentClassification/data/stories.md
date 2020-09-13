@@ -1,31 +1,43 @@
-## pickup path
-* GRASP
-  - utter_pickup
+## GotoLocation path
+* GotoLocation
+  - utter_0
 
-## release path
-* RELEASE
-  - utter_release
+## PickupObject
+* PickupObject
+  - utter_1
 
-## move-right path
-* MOVE_RIGHT
-  - utter_move-right
+## PutObject
+* PutObject
+  - utter_2
 
-## move-left path
-* MOVE_LEFT
-  - utter_move-left
+## GotoLocation PickupObject
+* GotoLocation PickupObject
+  - utter_3
 
-## move-forward path
-* MOVE_FORWARD
-  - utter_move-forward
+## GotoLocation PickupObject GotoLocation
+* GotoLocation PickupObject GotoLocation
+  - utter_4
 
-## move-back path
-* MOVE_BACK
-  - utter_move-back
+## GotoLocation PickupObject GotoLocation PutObject
+* GotoLocation PickupObject GotoLocation PutObject
+  - utter_5
 
-## transport path
-* TRANSPORT
-  - utter_transport
+## PickupObject GotoLocation
+* PickupObject GotoLocation
+  - utter_6
 
-## not_supported path
-* NOT_SUPPORTED
-  - utter_not_supported
+## PickupObject GotoLocation PutObject
+* GotoLocation PickupObject GotoLocation
+  - utter_7
+
+## GotoLocation PutObject
+* GotoLocation PutObject
+  - utter_8
+
+## GotoLocation PickupObject PutObject
+* GotoLocation PickupObject PutObject
+  - utter_9
+
+## PickupObject PutObject
+* PickupObject PutObject
+  - utter_10

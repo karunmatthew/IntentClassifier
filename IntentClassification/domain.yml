@@ -1,38 +1,51 @@
 intents:
-  - RELEASE
-  - GRASP
-  - MOVE_RIGHT
-  - MOVE_LEFT
-  - MOVE_FORWARD
-  - MOVE_BACK
-  - TRANSPORT
-  - NOT_SUPPORTED
+  - GotoLocation
+  - PickupObject
+  - PutObject
+  - GotoLocation PickupObject
+  - GotoLocation PickupObject GotoLocation
+  - GotoLocation PickupObject GotoLocation PutObject
+  - PickupObject GotoLocation
+  - PickupObject GotoLocation PutObject
+  - GotoLocation PutObject
+  - GotoLocation PickupObject PutObject
+  - PickupObject PutObject
+
 
 responses:
 
-  utter_pickup:
-  - text: "GRASP"
+  utter_0:
+  - text: "GotoLocation"
 
-  utter_move-right:
-  - text: "MOVE_RIGHT"
+  utter_1:
+  - text: "PickupObject"
 
-  utter_move-left:
-  - text: "MOVE_LEFT"
+  utter_2:
+  - text: "PutObject"
 
-  utter_move-forward:
-  - text: "MOVE_FORWARD"
+  utter_3:
+  - text: "GotoLocation PickupObject"
 
-  utter_move-back:
-  - text: "MOVE_BACK"
+  utter_4:
+  - text: "GotoLocation PickupObject GotoLocation"
 
-  utter_release:
-  - text: "RELEASE"
+  utter_5:
+  - text: "GotoLocation PickupObject GotoLocation PutObject"
 
-  utter_transport:
-    - text: "TRANSPORT"
+  utter_6:
+  - text: "PickupObject GotoLocation"
 
-  utter_not_supported:
-    - text: "NOT_SUPPORTED"
+  utter_7:
+  - text: "PickupObject GotoLocation PutObject"
+
+  utter_8:
+  - text: "GotoLocation PutObject"
+
+  utter_9:
+  - text: "GotoLocation PickupObject PutObject"
+
+  utter_10:
+  - text: "PickupObject PutObject"
 
 session_config:
   session_expiration_time: 60

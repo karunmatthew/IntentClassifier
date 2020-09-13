@@ -1,5 +1,5 @@
 from typing import Any, Dict, List, Text
-
+import sys
 from rasa.nlu.constants import DENSE_FEATURE_NAMES, TEXT
 from rasa.nlu.tokenizers.tokenizer import Token
 from rasa.nlu.tokenizers.whitespace_tokenizer import WhitespaceTokenizer

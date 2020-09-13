@@ -1,5 +1,5 @@
 results/*
 .idea/*
-IntentClassification/results/*
-IntentClassification/venv
-IntentClassification/venv/*
+venv/*
+data-input/*
+models/*
