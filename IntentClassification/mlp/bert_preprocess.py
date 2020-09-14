@@ -1,12 +1,13 @@
 from math import sqrt
 
-import torch
 from util.apputil import get_data
-import spacy
+
 import json
 
 TRAIN_DATA_PATH = '../data-train/training_set.txt'
+DEV_DATA_PATH = '../data-train/dev_set.txt'
 TEST_DATA_PATH = '../data-test/testing_set.txt'
+
 TRAIN_BERT_FILE = '../data-train/train_bert.txt'
 TEST_BERT_FILE = '../data-test/test_bert.txt'
 
@@ -14,6 +15,7 @@ TRAIN_MLP_FILE = '../data-train/train_mlp.txt'
 TEST_MLP_FILE = '../data-test/test_mlp.txt'
 
 TRAIN_MLP_FULL_FILE = '../data-train/train_mlp_full.txt'
+DEV_MLP_FULL_FILE = '../data-train/dev_mlp_full.txt'
 TEST_MLP_FULL_FILE = '../data-test/test_mlp_full.txt'
 
 WRITE = 'w'
@@ -139,7 +141,12 @@ def get_visual_information(scene_desc):
 intent_count = {}
 create_mlp_full_dataset(TRAIN_DATA_PATH, TRAIN_MLP_FULL_FILE)
 print(intent_count)
+
 intent_count = {}
 create_mlp_full_dataset(TEST_DATA_PATH, TEST_MLP_FULL_FILE)
+print(intent_count)
+
+intent_count = {}
+create_mlp_full_dataset(DEV_DATA_PATH, DEV_MLP_FULL_FILE)
 print(intent_count)
 

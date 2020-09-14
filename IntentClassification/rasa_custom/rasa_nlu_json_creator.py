@@ -5,10 +5,11 @@
 import json
 from math import sqrt
 
-TRAINING_INPUT_FILE = '/home/karun/PycharmProjects/IntentClassification/data' \
-                      '-train/training_set.txt'
-RASA_OUTFILE = '/home/karun/PycharmProjects/IntentClassification/data/nlu1.json'
+TRAINING_INPUT_FILE = '../data-train/training_set.txt'
+RASA_OUTFILE = '../data/nlu.json'
 READ = 'r'
+
+TRAIN_SAMPLE_RATE = 0.1
 
 
 def create_rasa_training_set(file_path, out_file_path):

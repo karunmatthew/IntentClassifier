@@ -19,7 +19,7 @@ def get_task_related_objects(json_object):
     related_objects = []
     high_pddl = json_object['plan']['high_pddl']
     for action in high_pddl:
-        related_object, receptable_object = get_object_and_receptable(action)
+        related_object, receptable_object = get_object_and_receptacle(action)
         if not related_object is None and not related_object in related_objects:
             related_objects.append(related_object)
         if not receptable_object is None \
@@ -28,12 +28,12 @@ def get_task_related_objects(json_object):
     return related_objects
 
 
-# extracts the object and receptable object if present from a
+# extracts the object and receptacle object if present from a
 # single high_pddl_action
-def get_object_and_receptable(action):
+def get_object_and_receptacle(action):
     planner_action = action['planner_action']
     related_object = None
-    receptable_object = None
+    receptacle_object = None
     if 'objectId' in planner_action:
         related_object_data = planner_action['objectId'].split('|')
         related_object = {
@@ -48,7 +48,7 @@ def get_object_and_receptable(action):
     if 'receptacleObjectId' in planner_action:
         related_object_data = planner_action['receptacleObjectId'].split(
             '|')
-        receptable_object = {
+        receptacle_object = {
             'entityName': related_object_data[0],
             'object_type': 'receptable',
             'relevant': 1,
@@ -57,7 +57,7 @@ def get_object_and_receptable(action):
                          float(related_object_data[3])]
         }
 
-    return related_object, receptable_object
+    return related_object, receptacle_object
 
 
 def get_floor_plan(json_object):

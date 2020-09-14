@@ -1,34 +1,44 @@
 import json
 import copy
 import sys
+
 from util.apputil import get_json_file_paths
 from util.alfred_json_parser import get_action_sequence, \
-    get_object_and_receptable, is_of_task_type, get_task_related_objects, \
+    get_object_and_receptacle, is_of_task_type, get_task_related_objects, \
     get_floor_plan
 
 # CONSTANTS
 APPEND = "a"
 JSON = '.json'
-PICK_AND_PLACE = "pick_and_place_simple"
+
+# DATA PARTITIONS
+TRAIN_PERCENT = 0.70
+TEST_PERCENT = 0.15
+DEV_PERCENT = 0.15
+
+# dataset paths
 TRAINING_SET_FILE = "../data-train/training_set.txt"
+DEV_SET_FILE = "../data-train/dev_set.txt"
 TESTING_SET_FILE = "../data-test/testing_set.txt"
-FOLDER_PATH = "/home/karun/Research_Project/alfred/data/json_feat_2.1.0/"
+
+FOLDER_PATH = "/home/student.unimelb.edu.au/kvarghesemat/Alfred/json_feat_2.1.0/"
 # FOLDER_PATH = "/media/karun/My Passport/full_2.1.0/train/"
 
 GOTO_LOCATION = 'GotoLocation'
 PICKUP_ACTION = 'PickupObject'
 PUTDOWN_ACTION = 'PutObject'
 
+PICK_AND_PLACE = "pick_and_place_simple"
+
 # We need to divide the data set into train and test sets
 # We also limit training to a small subset of floor plans
 # to see if the system is able to generalize to different
 # types of environments
 train_floor_plans = []
+dev_floor_plans = []
 test_floor_plans = []
-trial_count = 0
-TRAIN_PERCENT = 0.10
-floor_plans = {}
 
+floor_plans = {}
 agent_data = {}
 agent_init_data = {}
 
@@ -42,9 +52,7 @@ multi_desc_count = 0.0
 high_desc_count = 0.0
 
 
-# FOLDER_PATH = "/media/karun/My Passport/full_2.1.0/train/"
-
-# parses the json file
+# initializes agent location as the initial location in alfred data
 def init_agent_data(json_object):
     init_action = json_object['scene']['init_action']
     global agent_data, agent_init_data
@@ -57,6 +65,7 @@ def init_agent_data(json_object):
                                     init_action['rotation'], 0]}
 
 
+# update the agent location
 def update_agent_data(location_string):
     loc = location_string.split('|')
     agent_data['position'] = [float(loc[1]), float(loc[2]), float(loc[3]), 0.0,
@@ -77,7 +86,7 @@ def get_relevant_high_desc_objects(task_objects, json_object, high_idx):
     high_desc_objects = copy.deepcopy(task_objects)
     high_pddl_action = get_corresponding_high_pddl_action(high_idx, json_object)
 
-    related_object, receptable_object = get_object_and_receptable(
+    related_object, receptable_object = get_object_and_receptacle(
         high_pddl_action)
 
     action_args = []
@@ -161,7 +170,7 @@ def parse_json_file(file):
     high_descs_data = []
     multi_descs_data = []
 
-    is_training_record = False
+    training_record_type = 0
 
     with open(file) as json_file:
 
@@ -176,7 +185,11 @@ def parse_json_file(file):
             # is to be added to training set or testing set
             floor_plan = get_floor_plan(json_object)
             if floor_plan in train_floor_plans:
-                is_training_record = True
+                training_record_type = 0
+            elif floor_plan in dev_floor_plans:
+                training_record_type = 1
+            else:
+                training_record_type = 2
 
             # iterate through each language annotation of different Turks
             for lang_ann in language_annotations:
@@ -293,18 +306,19 @@ def parse_json_file(file):
                 multi_descs_data = multi_descs_data + \
                                    get_multi_high_descs(task_high_desc)
 
-
             write_record(high_descs_data, multi_descs_data, task_descs_data,
-                         is_training_record)
+                         training_record_type)
 
 
 def write_record(high_descs_data, multi_descs_data, task_descs_data,
-                 is_training_record):
+                 training_record_type):
     print_records(high_descs_data, multi_descs_data, task_descs_data)
     records = task_descs_data + high_descs_data + multi_descs_data
 
-    if is_training_record:
+    if training_record_type == 0:
         out_file = open(TRAINING_SET_FILE, APPEND)
+    elif training_record_type == 1:
+        out_file = open(DEV_SET_FILE, APPEND)
     else:
         out_file = open(TESTING_SET_FILE, APPEND)
 
@@ -371,6 +385,8 @@ def populate_floor_plans(folder_path):
                         floor_plans[floor_plan] = 1
                     else:
                         floor_plans[floor_plan] = floor_plans[floor_plan] + 1
+    print('Unique Floor Plans :', len(floor_plans))
+    print('Total Files        :', files_total)
 
 
 def collect_statistics(folder_path):
@@ -392,19 +408,31 @@ def collect_statistics(folder_path):
                     high_desc_count = high_desc_count + 1
 
 
-populate_floor_plans(FOLDER_PATH)
-print('Unique Floor Plans :', len(floor_plans))
-print('Total Files        :', files_total)
+# divide the floor plans into train, test and dev
+def divide_floor_plans():
+    trial_count = 0
+    # divide all floor plans into train, dev and test sets
+    for plan in floor_plans:
+        trial_count = trial_count + floor_plans[plan]
+        if trial_count / files_total < TRAIN_PERCENT:
+            train_floor_plans.append(plan)
+        elif trial_count / files_total < (TRAIN_PERCENT + DEV_PERCENT):
+            dev_floor_plans.append(plan)
+        else:
+            test_floor_plans.append(plan)
 
-# divide all floorplans between train and test sets
-for plan in floor_plans:
-    trial_count = trial_count + floor_plans[plan]
-    if trial_count / files_total < TRAIN_PERCENT:
-        train_floor_plans.append(plan)
-    else:
-        test_floor_plans.append(plan)
+
+# Now all alfred data is not of pick_and_place_simple type
+# We need to filter out trials that are of other task types
+# and then partition the rest on the basis of floor plans.
+# Distinct floor plans will be assigned to train, dev and
+# test sets.
+populate_floor_plans(FOLDER_PATH)
+
+divide_floor_plans()
 
 print('Train floor plans  :', len(train_floor_plans))
+print('Dev floor plans    :', len(dev_floor_plans))
 print('Test floor plans   :', len(test_floor_plans))
 
 generate_training_data(FOLDER_PATH)
