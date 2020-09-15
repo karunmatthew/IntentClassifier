@@ -12,8 +12,8 @@ from math import sqrt
 from sklearn.metrics import precision_recall_fscore_support
 
 RASA_SERVER = 'http://localhost:5005/model/parse'
-TEST_FILE_PATH = '/home/karun/PycharmProjects/IntentClassification/data-test/' \
-                 'testing_set.txt'
+TEST_FILE_PATH = '/home/karun/PycharmProjects/IntentClassification/data-train/' \
+                 'dev_set.txt'
 READ = 'r'
 
 headers = {
@@ -77,10 +77,10 @@ def read_test_data(file_path):
         action_sequence_string = ' '.join(action_sequence)
         desc_string = ' '.join(desc)
         desc_string = desc_string.replace('\"', '')
-        # visual_data = get_visual_information(json_object['scene_description'])
+        visual_data = get_visual_information(json_object['scene_description'])
         desc_string = desc_string + ' '
-        # for visual_info in visual_data:
-        #    desc_string = desc_string + '@@@@@@' + str(visual_info)
+        for visual_info in visual_data:
+            desc_string = desc_string + ' ' + str(visual_info)
         # need to remove quotes from data input
         data = '{"text": "' + desc_string + '"}'
         print(data)

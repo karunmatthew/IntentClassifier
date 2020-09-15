@@ -22,10 +22,10 @@ def create_rasa_training_set(file_path, out_file_path):
         action_sequence_string = ' '.join(action_sequence)
         desc_string = ' '.join(desc)
         desc_string = desc_string.replace('\"', '')
-        # visual_data = get_visual_information(json_object['scene_description'])
+        visual_data = get_visual_information(json_object['scene_description'])
         desc_string = desc_string + ' '
-        # for visual_info in visual_data:
-        #    desc_string = desc_string + '@@@@@@' + str(visual_info)
+        for visual_info in visual_data:
+            desc_string = desc_string + ' ' + str(visual_info)
         intent_json = {'text': desc_string, 'intent': action_sequence_string}
         intents.append(intent_json)
         print(intent_json, '\n')
@@ -38,7 +38,6 @@ def create_rasa_training_set(file_path, out_file_path):
 
 
 def get_visual_information(scene_desc):
-
     dist_to_obj = 100
     dist_to_recep = 100
     obj_relevant = 0
@@ -73,5 +72,6 @@ def get_visual_information(scene_desc):
 
     return [current_agent_pos_x, current_agent_pos_y, current_agent_pos_z,
             dist_to_obj, dist_to_recep]
+
 
 create_rasa_training_set(TRAINING_INPUT_FILE, RASA_OUTFILE)
