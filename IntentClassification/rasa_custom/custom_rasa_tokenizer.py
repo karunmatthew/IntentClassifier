@@ -45,11 +45,17 @@ class CustomRasaTokenizer(WhitespaceTokenizer):
         of the first and last respective tokens stay the same.
         """
 
+        # extract the visual information from the text information
+        visual_data = []
+        if '@@@@@@' in message.text:
+            visual_data_string = message.text[message.text.index('@@@@@@')+7:]
+            message.set('visual_info', visual_data_string)
+            message.text = message.text[0: message.text.index('@@@@@@')]
+
         # perform whitespace tokenization
         tokens_in = super().tokenize(message, attribute)
 
         tokens_out = []
-
         for token in tokens_in:
             token_start, token_end, token_text = token.start, token.end, token.text
 

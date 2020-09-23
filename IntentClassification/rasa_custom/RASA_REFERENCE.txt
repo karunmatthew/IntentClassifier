@@ -1,11 +1,37 @@
 rasa train
 rasa shell
 rasa shell nlu
-rasa run --enable-api -m models/20200914-234918.tar.gz
+
+rasa run --enable-api -m models/20200914-131521.tar.gz
+# with visual data
+rasa run --enable-api -m models/20200915-124036.tar.gz
+
+rasa run --enable-api -m models/20200915-190011_Visual_Features_with_obj_recept_dist.tar.gz
+
+rasa run --enable-api -m models/20200916-041814_Visual_and_lang_separately_trained_70.tar.gz
+
+rasa run --enable-api -m models/20200916-123638_Visual_and_Lang_separately_trained_10_rounded.tar.gz
+
+rasa run --enable-api -m models/20200919-143003_Visual_3_features_only.tar.gz
+
+rasa run --enable-api -m models/20200920-001545_Visual_3_features_training_100.tar.gz
+
+rasa run --enable-api -m models/20200920-223040_no_visual_100_train.tar.gz
+
+rasa run --enable-api -m models/20200921-003104_no_visual_train_10.tar.gz
+
+rasa run --enable-api -m models/20200921-233616.tar.gz
+
+rasa run --enable-api -m models/20200922-014604_train_10_visual_3_features_internal.tar.gz
+
+rasa run --enable-api -m models/20200922-131905.tar.gz
+
+rasa run --enable-api -m models/20200922-160754_visual_internal_truly_train_10.tar.gz
+rasa run --enable-api -m models/20200922-224958_visual_internal_train_100.tar.gz
 
 
 export PYTHONPATH=/home/karun/PycharmProjects/IntentClassification/rasa_custom/:$PYTHONPATH
-
+export PYTHONPATH=/home/karun/PycharmProjects/IntentClassification/rasa_custom/:$PYTHONPATH
 
 dbms.security.procedures.unrestricted=gds.*
 

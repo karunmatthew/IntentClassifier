@@ -3,16 +3,16 @@
 language: en
 
 pipeline:
-# - name: custom_rasa_tokenizer.CustomRasaTokenizer
-# - name: custom_rasa_featuriser.CustomRASAFeaturizer
-- name: ConveRTTokenizer
-- name: ConveRTFeaturizer
+- name: rasa_custom.custom_rasa_tokenizer.CustomRasaTokenizer
+# - name: ConveRTTokenizer
+- name: rasa_custom.custom_rasa_featuriser.CustomRASAFeaturizer
+# - name: ConveRTFeaturizer
 - name: RegexFeaturizer
 - name: LexicalSyntacticFeaturizer
 - name: CRFEntityExtractor
 # - name: EntitySynonymMapper          # doesnt give any performance improvement
-# - name: custom_diet_classifier.CustomDIETClassifier
-- name: DIETClassifier
+# - name: DIETClassifier
+- name: rasa_custom.custom_diet_classifier.CustomDIETClassifier
   epochs: 30
   entity_recognition: False
 #  # batch_strategy: balanced        # prevents class imbalance

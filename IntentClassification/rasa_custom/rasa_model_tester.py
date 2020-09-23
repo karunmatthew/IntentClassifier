@@ -7,13 +7,17 @@
 
 import requests
 import json
+import copy
 from math import sqrt
 
 from sklearn.metrics import precision_recall_fscore_support
 
 RASA_SERVER = 'http://localhost:5005/model/parse'
-TEST_FILE_PATH = '/home/karun/PycharmProjects/IntentClassification/data-train/' \
-                 'dev_set.txt'
+# TEST_FILE_PATH = '/home/karun/PycharmProjects/IntentClassification/data-train/' \
+#                 'dev_set.txt'
+TEST_FILE_PATH = '/home/student.unimelb.edu.au/kvarghesemat/PycharmProjects/IntentClassifier/IntentClassification' \
+                 '/data-train/dev_set.txt'
+
 READ = 'r'
 
 headers = {
@@ -22,7 +26,6 @@ headers = {
 
 
 def get_visual_information(scene_desc):
-
     dist_to_obj = 100
     dist_to_recep = 100
     obj_relevant = 0
@@ -33,30 +36,36 @@ def get_visual_information(scene_desc):
 
     for entry in scene_desc:
         if entry['entityName'] == 'agent':
-            current_agent_pos_x = entry['position'][0]
-            current_agent_pos_y = entry['position'][1]
-            current_agent_pos_z = entry['position'][2]
+            current_agent_pos_x = round(entry['position'][0], 2)
+            current_agent_pos_y = round(entry['position'][1], 2)
+            current_agent_pos_z = round(entry['position'][2], 2)
 
     agent_pos = [current_agent_pos_x, current_agent_pos_y, current_agent_pos_z]
+
+    object_pos = [0, 0, 0]
+    recep_pos = [0, 0, 0]
 
     for entry in scene_desc:
         if not entry['entityName'] == 'agent' and entry['object_type'] == \
                 'simple':
             obj_relevant = entry['relevant']
             object_pos = entry['position']
-            dist_to_obj = sqrt(pow(current_agent_pos_x - object_pos[0], 2) +
-                               pow(current_agent_pos_y - object_pos[1], 2) +
-                               pow(current_agent_pos_z - object_pos[2], 2))
+            dist_to_obj = round(sqrt(pow(current_agent_pos_x - object_pos[0], 2) +
+                                     pow(current_agent_pos_y - object_pos[1], 2) +
+                                     pow(current_agent_pos_z - object_pos[2], 2)), 2)
         elif not entry['entityName'] == 'agent' and entry['object_type'] == \
                 'receptable':
             recep_relevant = entry['relevant']
             recep_pos = entry['position']
-            dist_to_recep = sqrt(pow(current_agent_pos_x - recep_pos[0], 2) +
-                                 pow(current_agent_pos_y - recep_pos[1], 2) +
-                                 pow(current_agent_pos_z - recep_pos[2], 2))
+            dist_to_recep = round(sqrt(pow(current_agent_pos_x - recep_pos[0], 2) +
+                                       pow(current_agent_pos_y - recep_pos[1], 2) +
+                                       pow(current_agent_pos_z - recep_pos[2], 2)), 2)
 
-    return [current_agent_pos_x, current_agent_pos_y, current_agent_pos_z,
-            dist_to_obj, dist_to_recep]
+    dist_obj_to_recep = round(sqrt(pow(recep_pos[0] - object_pos[0], 2) +
+                                   pow(recep_pos[1] - object_pos[1], 2) +
+                                   pow(recep_pos[2] - object_pos[2], 2)), 2)
+
+    return [dist_to_obj, dist_to_recep, dist_obj_to_recep]
 
 
 def read_test_data(file_path):
@@ -64,52 +73,42 @@ def read_test_data(file_path):
     count = 0.0
     correct = 0.0
 
+    extra_count = 0.0
+    extra_correct = 0.0
+
     predicted_tags = []
     actual_tags = []
+
+    extra_predicted_tags = []
+    extra_actual_tags = []
 
     for line in file:
         count += 1
         print(correct, '   ', count)
-        print(line)
+
         json_object = json.loads(line)
         action_sequence = json_object['action_sequence']
         desc = json_object['desc']
         action_sequence_string = ' '.join(action_sequence)
         desc_string = ' '.join(desc)
         desc_string = desc_string.replace('\"', '')
+        desc_string = desc_string.replace(',', '')
+
+        # if the record_type is not task_desc add the record without visual information
+        if json_object['record_type'] != 'task_desc':
+            text_string = copy.deepcopy(desc_string)
+            extra_correct = post_to_rasa(action_sequence_string, extra_actual_tags, extra_correct, text_string, extra_predicted_tags)
+            extra_count += 1
+
         visual_data = get_visual_information(json_object['scene_description'])
-        desc_string = desc_string + ' '
+        desc_string = desc_string + ' @@@@@@'
+
         for visual_info in visual_data:
             desc_string = desc_string + ' ' + str(visual_info)
         # need to remove quotes from data input
-        data = '{"text": "' + desc_string + '"}'
-        print(data)
+        correct = post_to_rasa(action_sequence_string, actual_tags, correct, desc_string, predicted_tags)
 
-        response = requests.post(RASA_SERVER, headers=headers, data=data)
-        response_json = json.loads(response.text)
-
-        print(response_json)
-        intent = response_json['intent']['name']
-        confidence = response_json['intent']['confidence']
-
-        predicted_tags.append(intent.strip())
-        actual_tags.append(action_sequence_string.strip())
-
-        if intent.strip() == action_sequence_string.strip():
-            print('MATCH')
-            print(intent)
-            print(action_sequence_string)
-            correct += 1
-        # elif tag == 'NOT_SUPPORTED':
-        #    correct += 1
-        else:
-            print('NOT MATCH')
-            print(intent)
-            print(action_sequence_string)
-            # print(intent, ":", confidence)
-            # print(action_sequence_string, ":")
-
-    print('Accuracy :: ', correct/count)
+    print('Accuracy :: ', correct / count)
     print('Correct  :: ', correct)
     print('Total    :: ', count)
 
@@ -117,17 +116,59 @@ def read_test_data(file_path):
                                           average='macro'))
     print(precision_recall_fscore_support(actual_tags, predicted_tags,
                                           average=None,
-                  labels=['GotoLocation',
-                          'PickupObject',
-                          'PutObject',
-                          'GotoLocation PickupObject',
-                          'GotoLocation PickupObject GotoLocation',
-                          'GotoLocation PickupObject GotoLocation PutObject',
-                          'PickupObject GotoLocation',
-                          'PickupObject GotoLocation PutObject',
-                          'GotoLocation PutObject',
-                          'GotoLocation PickupObject PutObject',
-                          'PickupObject PutObject']))
+                                          labels=['GotoLocation',
+                                                  'PickupObject',
+                                                  'PutObject',
+                                                  'GotoLocation PickupObject',
+                                                  'GotoLocation PickupObject GotoLocation',
+                                                  'GotoLocation PickupObject GotoLocation PutObject',
+                                                  'PickupObject GotoLocation',
+                                                  'PickupObject GotoLocation PutObject',
+                                                  'GotoLocation PutObject',
+                                                  'GotoLocation PickupObject PutObject',
+                                                  'PickupObject PutObject']))
+    print('Accuracy :: ', (correct + extra_correct) / (extra_count + count))
+    print('Correct  :: ', (correct + correct + extra_correct))
+    print('Total    :: ', (count + extra_count))
+
+    print(precision_recall_fscore_support(actual_tags + extra_actual_tags, predicted_tags + extra_predicted_tags,
+                                          average='macro'))
+    print(precision_recall_fscore_support(actual_tags + extra_actual_tags, predicted_tags + extra_predicted_tags,
+                                          average=None,
+                                          labels=['GotoLocation',
+                                                  'PickupObject',
+                                                  'PutObject',
+                                                  'GotoLocation PickupObject',
+                                                  'GotoLocation PickupObject GotoLocation',
+                                                  'GotoLocation PickupObject GotoLocation PutObject',
+                                                  'PickupObject GotoLocation',
+                                                  'PickupObject GotoLocation PutObject',
+                                                  'GotoLocation PutObject',
+                                                  'GotoLocation PickupObject PutObject',
+                                                  'PickupObject PutObject']))
+
+
+def post_to_rasa(action_sequence_string, actual_tags, correct, desc_string, predicted_tags):
+
+    data = '{"text": "' + desc_string + '"}'
+    response = requests.post(RASA_SERVER, headers=headers, data=data)
+    response_json = json.loads(response.text)
+
+    intent = response_json['intent']['name']
+    confidence = response_json['intent']['confidence']
+    predicted_tags.append(intent.strip())
+    actual_tags.append(action_sequence_string.strip())
+    if intent.strip() == action_sequence_string.strip():
+        correct += 1
+    # elif tag == 'NOT_SUPPORTED':
+    #    correct += 1
+    else:
+        print('NOT MATCH : ', data)
+        print(response_json)
+        print('Predicted Intent :', intent, ' Confidence :', confidence)
+        print('Actual Intent :', action_sequence_string)
+        print('\n')
+    return correct
 
 
 read_test_data(TEST_FILE_PATH)

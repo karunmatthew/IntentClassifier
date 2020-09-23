@@ -21,8 +21,8 @@ TRAINING_SET_FILE = "../data-train/training_set.txt"
 DEV_SET_FILE = "../data-train/dev_set.txt"
 TESTING_SET_FILE = "../data-test/testing_set.txt"
 
-# FOLDER_PATH = "/home/student.unimelb.edu.au/kvarghesemat/Alfred/json_feat_2.1.0/"
-FOLDER_PATH = "/home/karun/Research_Project/alfred/data/json_feat_2.1.0/"
+FOLDER_PATH = "/home/student.unimelb.edu.au/kvarghesemat/Alfred/json_feat_2.1.0/"
+# FOLDER_PATH = "/home/karun/Research_Project/alfred/data/json_feat_2.1.0/"
 # FOLDER_PATH = "/media/karun/My Passport/full_2.1.0/train/"
 
 GOTO_LOCATION = 'GotoLocation'
