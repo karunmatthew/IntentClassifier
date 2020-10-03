@@ -7,35 +7,27 @@ import spacy
 import torch
 import numpy as np
 from spacy.matcher.matcher import Matcher
+import sys
 
 nlp = spacy.load("en_core_web_lg")
 
-doc = nlp("turn right after walking forward two steps")
-
-ss = np.append(doc.vector, [1, 2, 7])
-
-doc_tensor = torch.from_numpy(ss)
-
-print(doc_tensor)
-
-print(doc_tensor.shape)
-
-print(ff)
-
-print(doc.vector)
-print(doc.vector.shape)
-print(torch.from_numpy(doc.vector))
-
-print(ag)
+# doc = nlp("turn right after walking forward two steps")
+# ss = np.append(doc.vector, [1, 2, 7])
+# doc_tensor = torch.from_numpy(ss)
+# print(doc_tensor)
+# print(doc_tensor.shape)
+# print(doc.vector)
+# print(doc.vector.shape)
+# print(torch.from_numpy(doc.vector))
 
 # provide a document here
-doc = nlp("I three 4000")
+doc = nlp("Pick up the cup from the counter")
 
 # -------------------LEXICAL ATTRIBUTES-----------------------------------------
 # ------------------------------------------------------------------------------
 
 # doc is iterable
-for token in doc:
+''' for token in doc:
     print(token.i)
     print(token.text)
     # lexical attributes of tokens
@@ -43,24 +35,32 @@ for token in doc:
     print(token.is_punct)
     print(token.like_num)
 
+sys.exit(0)
+'''
 # slice of the doc
-span = doc[1:4]
+# span = doc[1:4]
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
+
+doc1 = nlp("paper towel")
+doc2 = nlp("toilet roll")
+
+token1 = doc1[0]
+token2 = doc2[0]
+
+print(doc1.similarity(doc2))
+print(token1.similarity(token2))
 
 
 # load the small english model
 nlp = spacy.load("en_core_web_lg")
 
-doc = nlp("turn right after walking forward two steps")
+doc = nlp("turn left go to the wooden table on the left turn right go to the chair put the credit card on the chair")
 
-print(doc.tensor)
-
-print(a)
 root_verb = ''
 for token in doc:
-    print(token.text, ' ', token.pos_, ' ', token.dep_, ' ', token.head.text)
+    print(token.text, ' ', token.pos_, ' ', token.dep_, ' ', token.head.text, ' ', token.head.pos_)
     if token.dep_ == 'ROOT':
         root_verb = token.text
 
@@ -69,6 +69,8 @@ for chunk in doc.noun_chunks:
     print(chunk.text, chunk.root.text, chunk.root.dep_,
           chunk.root.head.text)
 
+
+sys.exit(0)
 
 # Finding a verb with a subject from below — good
 verbs = set()

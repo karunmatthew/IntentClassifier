@@ -20,14 +20,17 @@ TEST_FILE_PATH = '/home/student.unimelb.edu.au/kvarghesemat/PycharmProjects/Inte
 
 READ = 'r'
 
+WITH_VISUAL = False
+
 headers = {
     'Content-type': 'application/json'
 }
 
 
 def get_visual_information(scene_desc):
-    dist_to_obj = 100
-    dist_to_recep = 100
+    dist_to_obj = -1
+    dist_to_recep = -1
+    dist_obj_to_recep = -1
     obj_relevant = 0
     recep_relevant = 0
     current_agent_pos_x = 0
@@ -50,20 +53,23 @@ def get_visual_information(scene_desc):
                 'simple':
             obj_relevant = entry['relevant']
             object_pos = entry['position']
-            dist_to_obj = round(sqrt(pow(current_agent_pos_x - object_pos[0], 2) +
-                                     pow(current_agent_pos_y - object_pos[1], 2) +
-                                     pow(current_agent_pos_z - object_pos[2], 2)), 2)
+            if obj_relevant == 1:
+                dist_to_obj = round(sqrt(pow(current_agent_pos_x - object_pos[0], 2) +
+                                         pow(current_agent_pos_y - object_pos[1], 2) +
+                                         pow(current_agent_pos_z - object_pos[2], 2)), 2)
         elif not entry['entityName'] == 'agent' and entry['object_type'] == \
                 'receptable':
             recep_relevant = entry['relevant']
             recep_pos = entry['position']
-            dist_to_recep = round(sqrt(pow(current_agent_pos_x - recep_pos[0], 2) +
-                                       pow(current_agent_pos_y - recep_pos[1], 2) +
-                                       pow(current_agent_pos_z - recep_pos[2], 2)), 2)
+            if recep_relevant == 1:
+                dist_to_recep = round(sqrt(pow(current_agent_pos_x - recep_pos[0], 2) +
+                                           pow(current_agent_pos_y - recep_pos[1], 2) +
+                                           pow(current_agent_pos_z - recep_pos[2], 2)), 2)
 
-    dist_obj_to_recep = round(sqrt(pow(recep_pos[0] - object_pos[0], 2) +
-                                   pow(recep_pos[1] - object_pos[1], 2) +
-                                   pow(recep_pos[2] - object_pos[2], 2)), 2)
+    if obj_relevant == 1 and recep_relevant == 1:
+        dist_obj_to_recep = round(sqrt(pow(recep_pos[0] - object_pos[0], 2) +
+                                       pow(recep_pos[1] - object_pos[1], 2) +
+                                       pow(recep_pos[2] - object_pos[2], 2)), 2)
 
     return [dist_to_obj, dist_to_recep, dist_obj_to_recep]
 
@@ -84,27 +90,34 @@ def read_test_data(file_path):
 
     for line in file:
         count += 1
-        print(correct, '   ', count)
+
+        if count % 1000 == 0:
+            print(correct, '   ', count)
 
         json_object = json.loads(line)
         action_sequence = json_object['action_sequence']
         desc = json_object['desc']
+        desc = [item.strip() for item in desc]
         action_sequence_string = ' '.join(action_sequence)
         desc_string = ' '.join(desc)
         desc_string = desc_string.replace('\"', '')
+        desc_string = desc_string.replace('.', '')
+        desc_string = desc_string.replace(';', '')
         desc_string = desc_string.replace(',', '')
+        desc_string = desc_string.lower()
 
         # if the record_type is not task_desc add the record without visual information
-        if json_object['record_type'] != 'task_desc':
+        if json_object['record_type'] != 'task_desc' and WITH_VISUAL:
             text_string = copy.deepcopy(desc_string)
             extra_correct = post_to_rasa(action_sequence_string, extra_actual_tags, extra_correct, text_string, extra_predicted_tags)
             extra_count += 1
 
-        visual_data = get_visual_information(json_object['scene_description'])
-        desc_string = desc_string + ' @@@@@@'
+        if WITH_VISUAL:
+            visual_data = get_visual_information(json_object['scene_description'])
+            desc_string = desc_string + ' @@@@@@'
+            for visual_info in visual_data:
+                desc_string = desc_string + ' ' + str(visual_info)
 
-        for visual_info in visual_data:
-            desc_string = desc_string + ' ' + str(visual_info)
         # need to remove quotes from data input
         correct = post_to_rasa(action_sequence_string, actual_tags, correct, desc_string, predicted_tags)
 
@@ -131,6 +144,11 @@ def read_test_data(file_path):
     print('Correct  :: ', (correct + correct + extra_correct))
     print('Total    :: ', (count + extra_count))
 
+    from sklearn.metrics import confusion_matrix
+    confusion = confusion_matrix(actual_tags, predicted_tags)
+    print('Confusion Matrix\n')
+    print(confusion)
+
     print(precision_recall_fscore_support(actual_tags + extra_actual_tags, predicted_tags + extra_predicted_tags,
                                           average='macro'))
     print(precision_recall_fscore_support(actual_tags + extra_actual_tags, predicted_tags + extra_predicted_tags,
@@ -146,6 +164,10 @@ def read_test_data(file_path):
                                                   'GotoLocation PutObject',
                                                   'GotoLocation PickupObject PutObject',
                                                   'PickupObject PutObject']))
+    from sklearn.metrics import confusion_matrix
+    confusion = confusion_matrix(actual_tags + extra_actual_tags, predicted_tags + extra_predicted_tags)
+    print('Confusion Matrix\n')
+    print(confusion)
 
 
 def post_to_rasa(action_sequence_string, actual_tags, correct, desc_string, predicted_tags):

@@ -1,8 +1,12 @@
 import os
-
+import spacy
+import torch
 
 JSON = '.json'
 READ = "r"
+
+nlp = spacy.load("en_core_web_lg")
+
 
 def get_json_file_paths(folder_path):
     file_paths = []
@@ -31,3 +35,12 @@ def get_default_device():
         return torch.device('cuda')
     else:
         return torch.device('cpu')
+
+
+def get_object_from_sentence(text):
+    doc = nlp(text)
+    for chunk in doc.noun_chunks:
+        print(chunk.text, ' : ', chunk.root.text, ' : ', chunk.root.dep_, ' : ',
+              chunk.root.head.text, ' : ', chunk.root.head.pos_)
+    return ''
+

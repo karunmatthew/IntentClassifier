@@ -3,17 +3,23 @@
 language: en
 
 pipeline:
-- name: rasa_custom.custom_rasa_tokenizer.CustomRasaTokenizer
+- name: rasa_custom.custom_spacy_nlp.CustomSpacyNLP
+  model: en_core_web_lg
+  case_sensitive: False
+# - name: rasa_custom.custom_rasa_tokenizer.CustomRasaTokenizer
+- name: rasa_custom.custom_spacy_tokenizer.CustomSpacyTokenizer
 # - name: ConveRTTokenizer
-- name: rasa_custom.custom_rasa_featuriser.CustomRASAFeaturizer
+# - name: rasa_custom.custom_rasa_featuriser.CustomRASAFeaturizer
 # - name: ConveRTFeaturizer
+- name: rasa_custom.custom_spacy_featuriser.CustomSpacyFeaturizer
+  pooling: mean
 - name: RegexFeaturizer
 - name: LexicalSyntacticFeaturizer
 - name: CRFEntityExtractor
 # - name: EntitySynonymMapper          # doesnt give any performance improvement
 # - name: DIETClassifier
 - name: rasa_custom.custom_diet_classifier.CustomDIETClassifier
-  epochs: 30
+  epochs: 10
   entity_recognition: False
 #  # batch_strategy: balanced        # prevents class imbalance
 #- name: EntitySynonymMapper

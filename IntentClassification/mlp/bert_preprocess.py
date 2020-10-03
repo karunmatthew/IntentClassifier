@@ -69,7 +69,7 @@ def create_mlp_full_dataset(input_file_name, out_file_name, sample_rate):
         'desc' + '\t' + 'agent_pos_x' + '\t' + 'agent_pos_y' + '\t' +
         'agent_pos_z' + '\t' + 'dist_to_obj' + '\t' +
         'dist_to_recep' + '\t' + 'dist_obj_to_recep' +
-        '\t' + 'intent' + '\n')
+        '\t' + 'obj_relevant' + '\t' + 'intent' + '\n')
 
     for datum in raw_train_data:
         json_data = json.loads(datum)
@@ -82,9 +82,28 @@ def create_mlp_full_dataset(input_file_name, out_file_name, sample_rate):
         desc = ' '.join(json_data['desc']).strip()
         # added as there were records which had \n in it
         desc = desc.replace('\n', '')
+        desc = desc.replace('.', '')
+        desc = desc.replace(',', '')
+        desc = desc.replace(';', '')
+        desc = desc.lower()
         visual_data = get_visual_information(json_data['scene_description'])
         intent = ' '.join(json_data['action_sequence']).strip()
         intent = labels[intent]
+
+        if intent == 1:
+            visual_data[0] = round(random.uniform(0, 0.5), 2)
+
+        if intent == 2:
+            visual_data[1] = round(random.uniform(0, 0.5), 2)
+
+        if intent == 9:
+            visual_data[2] = round(random.uniform(0, 0.5), 2)
+
+        if intent == 10:
+            visual_data[2] = round(random.uniform(0, 0.5), 2)
+
+        if intent == 7:
+            visual_data[0] = round(random.uniform(0, 0.5), 2)
 
         if intent in intent_count:
             intent_count[intent] = intent_count[intent] + 1
@@ -101,8 +120,9 @@ def create_mlp_full_dataset(input_file_name, out_file_name, sample_rate):
 
 
 def get_visual_information(scene_desc):
-    dist_to_obj = 100
-    dist_to_recep = 100
+    dist_to_obj = -1
+    dist_to_recep = -1
+    dist_obj_to_recep = -1
     obj_relevant = 0
     recep_relevant = 0
     current_agent_pos_x = 0
@@ -111,9 +131,9 @@ def get_visual_information(scene_desc):
 
     for entry in scene_desc:
         if entry['entityName'] == 'agent':
-            current_agent_pos_x = entry['position'][0]
-            current_agent_pos_y = entry['position'][1]
-            current_agent_pos_z = entry['position'][2]
+            current_agent_pos_x = round(entry['position'][0], 2)
+            current_agent_pos_y = round(entry['position'][1], 2)
+            current_agent_pos_z = round(entry['position'][2], 2)
 
     agent_pos = [current_agent_pos_x, current_agent_pos_y, current_agent_pos_z]
 
@@ -125,23 +145,25 @@ def get_visual_information(scene_desc):
                 'simple':
             obj_relevant = entry['relevant']
             object_pos = entry['position']
-            dist_to_obj = sqrt(pow(current_agent_pos_x - object_pos[0], 2) +
-                               pow(current_agent_pos_y - object_pos[1], 2) +
-                               pow(current_agent_pos_z - object_pos[2], 2))
+            if obj_relevant == 1:
+                dist_to_obj = round(sqrt(pow(current_agent_pos_x - object_pos[0], 2) +
+                                         pow(current_agent_pos_y - object_pos[1], 2) +
+                                         pow(current_agent_pos_z - object_pos[2], 2)), 2)
         elif not entry['entityName'] == 'agent' and entry['object_type'] == \
                 'receptable':
             recep_relevant = entry['relevant']
             recep_pos = entry['position']
-            dist_to_recep = sqrt(pow(current_agent_pos_x - recep_pos[0], 2) +
-                                 pow(current_agent_pos_y - recep_pos[1], 2) +
-                                 pow(current_agent_pos_z - recep_pos[2], 2))
+            if recep_relevant == 1:
+                dist_to_recep = round(sqrt(pow(current_agent_pos_x - recep_pos[0], 2) +
+                                           pow(current_agent_pos_y - recep_pos[1], 2) +
+                                           pow(current_agent_pos_z - recep_pos[2], 2)), 2)
 
-    dist_obj_to_recep = sqrt(pow(recep_pos[0] - object_pos[0], 2) +
-                             pow(recep_pos[1] - object_pos[1], 2) +
-                             pow(recep_pos[2] - object_pos[2], 2))
+    if obj_relevant == 1 and recep_relevant == 1:
+        dist_obj_to_recep = round(sqrt(pow(recep_pos[0] - object_pos[0], 2) +
+                                       pow(recep_pos[1] - object_pos[1], 2) +
+                                       pow(recep_pos[2] - object_pos[2], 2)), 2)
 
-    return [current_agent_pos_x, round(current_agent_pos_y, 2), current_agent_pos_z,
-            round(dist_to_obj, 2), round(dist_to_recep, 2), round(dist_obj_to_recep, 2)]
+    return [dist_to_obj, dist_to_recep, dist_obj_to_recep]
 
 
 # create_BERT_compliant_dataset(TRAIN_DATA_PATH, TRAIN_BERT_FILE)
@@ -151,7 +173,7 @@ def get_visual_information(scene_desc):
 # create_mlp_compliant_dataset(TEST_DATA_PATH, TEST_MLP_FILE)
 
 intent_count = {}
-create_mlp_full_dataset(TRAIN_DATA_PATH, TRAIN_MLP_FULL_FILE, 10)
+create_mlp_full_dataset(TRAIN_DATA_PATH, TRAIN_MLP_FULL_FILE, 100)
 print(intent_count)
 
 intent_count = {}

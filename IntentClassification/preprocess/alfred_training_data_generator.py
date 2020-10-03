@@ -283,6 +283,16 @@ def parse_json_file(file):
                     # certain actions signal that the agent's location has
                     # changed and requires it to be updated
                     update_agent_on_action(action_sequences, count, json_object)
+
+                    if count == 0:
+                        print('\n')
+                        print(high_desc)
+                        print(lang_ann["votes"])
+                        print(get_corresponding_high_pddl_action(0, json_object))
+                        poses = json_object['scene']['object_poses']
+                        obs = [item['objectName'] for item in poses]
+                        print(obs)
+
                     high_desc_data = {
                         'record_type': 'high_desc',
                         'desc': [high_desc.strip()],
@@ -306,8 +316,8 @@ def parse_json_file(file):
                 multi_descs_data = multi_descs_data + \
                                    get_multi_high_descs(task_high_desc)
 
-            write_record(high_descs_data, multi_descs_data, task_descs_data,
-                         training_record_type)
+            # write_record(high_descs_data, multi_descs_data, task_descs_data,
+            #             training_record_type)
 
 
 def write_record(high_descs_data, multi_descs_data, task_descs_data,

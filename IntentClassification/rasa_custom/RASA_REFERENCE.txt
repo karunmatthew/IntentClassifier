@@ -1,42 +1,51 @@
 rasa train
 rasa shell
 rasa shell nlu
+rasa shell nlu -m models/20200922-224958_visual_internal_train_100.tar.gz
+rasa shell nlu -m models/20200915-190011_Visual_Features_with_obj_recept_dist.tar.gz
 
-rasa run --enable-api -m models/20200914-131521.tar.gz
-# with visual data
-rasa run --enable-api -m models/20200915-124036.tar.gz
-
-rasa run --enable-api -m models/20200915-190011_Visual_Features_with_obj_recept_dist.tar.gz
-
-rasa run --enable-api -m models/20200916-041814_Visual_and_lang_separately_trained_70.tar.gz
-
-rasa run --enable-api -m models/20200916-123638_Visual_and_Lang_separately_trained_10_rounded.tar.gz
-
-rasa run --enable-api -m models/20200919-143003_Visual_3_features_only.tar.gz
-
-rasa run --enable-api -m models/20200920-001545_Visual_3_features_training_100.tar.gz
-
-rasa run --enable-api -m models/20200920-223040_no_visual_100_train.tar.gz
-
-rasa run --enable-api -m models/20200921-003104_no_visual_train_10.tar.gz
 
 rasa run --enable-api -m models/20200921-233616.tar.gz
-
 rasa run --enable-api -m models/20200922-014604_train_10_visual_3_features_internal.tar.gz
-
 rasa run --enable-api -m models/20200922-131905.tar.gz
-
 rasa run --enable-api -m models/20200922-160754_visual_internal_truly_train_10.tar.gz
 rasa run --enable-api -m models/20200922-224958_visual_internal_train_100.tar.gz
+rasa run --enable-api -m models/20200928-181020.tar.gz
+
+SPACY MODELS
+
+rasa run --enable-api -m models/20200929-111348.tar.gz
+
+Customized Spacy Model
+
+rasa run --enable-api -m models/20200929-123703.tar.gz
+
+Customized Spacy Model with zero varied
+
+rasa run --enable-api -m models/20200929-131808.tar.gz
+
+Customized Spacy Model with more tweaks
+
+rasa run --enable-api -m models/20200929-172401.tar.gz
+
+rasa run --enable-api -m models/20200929-213409.tar.gz
+
+rasa run --enable-api -m models/20200930-010747.tar.gz
+
+100% train No VISUAL
+
+rasa run --enable-api -m models/20200930-135727.tar.gz
+
+20% train
+
+rasa run --enable-api -m models/20200930-110228_spacy_20.tar.gz
 
 
-export PYTHONPATH=/home/karun/PycharmProjects/IntentClassification/rasa_custom/:$PYTHONPATH
 export PYTHONPATH=/home/karun/PycharmProjects/IntentClassification/rasa_custom/:$PYTHONPATH
 
 dbms.security.procedures.unrestricted=gds.*
 
 
-DATA DISTRIBUTION - KARUN UBUNTU
-{5: 15092, 9: 7636, 7: 15092, 10: 7591, 0: 15137, 1: 7591, 2: 7591, 3: 7591, 4: 7546, 6: 7546, 8: 7546}
-{5: 3548, 9: 1792, 7: 3548, 10: 1783, 0: 3557, 1: 1783, 2: 1783, 3: 1783, 4: 1774, 6: 1774, 8: 1774}
-{5: 3330, 9: 1737, 7: 3330, 10: 1701, 0: 3366, 1: 1701, 2: 1701, 3: 1701, 4: 1665, 6: 1665, 8: 1665}
+pip3 install rasa[spacy]
+python3 -m spacy download en_core_web_lg
+python3 -m spacy link en_core_web_lg en

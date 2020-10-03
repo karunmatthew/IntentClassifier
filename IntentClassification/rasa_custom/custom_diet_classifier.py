@@ -417,19 +417,33 @@ class CustomDIETClassifier(IntentClassifier, EntityExtractor):
             for label_example in labels_example
         )
 
+    '''# ensures that no wrong values are provided to the DIET classifier
+    # only numerical values are accepted
+    def sanitize_visual_input(self, string_value):
+        value = -1
+        try:
+            value = float(string_value)
+        except ValueError:
+            return -1
+        # we set a maximum and minimum value that these features can take
+        if value < -0.5:
+            return -1
+        elif value > 8:
+            return 8'''
+
     def _extract_features(
         self, message: Message, attribute: Text
     ) -> Tuple[Optional[scipy.sparse.spmatrix], Optional[np.ndarray]]:
         sparse_features = None
         dense_features = None
         visual_dense_features = None
-        print('Message', message.text)
-        print('Attribute', attribute)
+        # print('Message', message.text)
+        # print('Attribute', attribute)
 
         if message.get(SPARSE_FEATURE_NAMES[attribute]) is not None:
             sparse_features = message.get(SPARSE_FEATURE_NAMES[attribute])
 
-        print('DENSE_FEATURE_NAMES[attribute] :', DENSE_FEATURE_NAMES[attribute])
+        # print('DENSE_FEATURE_NAMES[attribute] :', DENSE_FEATURE_NAMES[attribute])
         if message.get(DENSE_FEATURE_NAMES[attribute]) is not None:
             dense_features = message.get(DENSE_FEATURE_NAMES[attribute])
             visual_info = message.get('visual_info')
@@ -440,18 +454,24 @@ class CustomDIETClassifier(IntentClassifier, EntityExtractor):
                 visual_dense_features = dense_features
                 visual_data = visual_info.strip().split(' ')
                 for v_data in visual_data:
-                    visual_col = np.full((visual_dense_features.shape[0], 1), float(v_data))
+                    float_value = float(v_data)
+                    if float_value < -0.5:
+                        float_value = -1
+                    elif float_value > 8:
+                        float_value = 8
+
+                    visual_col = np.full((visual_dense_features.shape[0], 1), float_value)
                     visual_dense_features = np.append(visual_dense_features, visual_col, 1)
             elif attribute == TEXT:
                 visual_dense_features = dense_features
                 for i in range(3):
-                    visual_col = np.full((visual_dense_features.shape[0], 1), float(0))
+                    visual_col = np.full((visual_dense_features.shape[0], 1), float(-1))
                     visual_dense_features = np.append(visual_dense_features, visual_col, 1)
             else:
                 visual_dense_features = dense_features
 
-            print('Dense Features Shape', dense_features.shape)
-            print('Visual Dense Features Shape', visual_dense_features.shape)
+            # print('Dense Features Shape', dense_features.shape)
+            # print('Visual Dense Features Shape', visual_dense_features.shape)
 
         if sparse_features is not None and dense_features is not None:
             if sparse_features.shape[0] != dense_features.shape[0]:
@@ -483,8 +503,8 @@ class CustomDIETClassifier(IntentClassifier, EntityExtractor):
             num_text_features = model_data.feature_dimension(TEXT_FEATURES)
             num_label_features = model_data.feature_dimension(LABEL_FEATURES)
 
-            print('num_text_features  : ', num_text_features)
-            print('num_label_features : ', num_label_features)
+            # print('num_text_features  : ', num_text_features)
+            # print('num_label_features : ', num_label_features)
             if num_text_features != num_label_features:
                 raise ValueError(
                     "If embeddings are shared text features and label features "
@@ -587,9 +607,9 @@ class CustomDIETClassifier(IntentClassifier, EntityExtractor):
         label_ids = []
         tag_name_to_tag_ids = defaultdict(list)
 
-        print('Length of training/testing data : ', len(training_data))
-        print('label_attribute                 : ', label_attribute)
-        print('training_data[0].get(label_attribute)    : ', training_data[0].get(label_attribute))
+        # print('Length of training/testing data : ', len(training_data))
+        # print('label_attribute                 : ', label_attribute)
+        # print('training_data[0].get(label_attribute)    : ', training_data[0].get(label_attribute))
 
         for example in training_data:
             if label_attribute is None or example.get(label_attribute):
