@@ -1,5 +1,7 @@
 results/*
 .idea/*
+.idea/
+.idea/*.xml
 venv/*
 data-input/*
 models/*

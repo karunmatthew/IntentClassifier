@@ -10,6 +10,11 @@ intents:
   - GotoLocation PutObject
   - GotoLocation PickupObject PutObject
   - PickupObject PutObject
+  - RotateAgent PickupObject
+  - RotateAgent PutObject
+  - RotateAgent PickupObject PutObject
+  - RotateAgent PickupObject GotoLocation PutObject
+  - RotateAgent PickupObject GotoLocation
 
 
 responses:
@@ -46,6 +51,21 @@ responses:
 
   utter_10:
   - text: "PickupObject PutObject"
+
+  utter_11:
+  - text: "RotateAgent PickupObject"
+
+  utter_12:
+  - text: "RotateAgent PutObject"
+
+  utter_13:
+  - text: "RotateAgent PickupObject PutObject"
+
+  utter_14:
+  - text: "RotateAgent PickupObject GotoLocation PutObject"
+
+  utter_15:
+  - text: "RotateAgent PickupObject GotoLocation"
 
 session_config:
   session_expiration_time: 60

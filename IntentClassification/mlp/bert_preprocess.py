@@ -1,6 +1,7 @@
 from math import sqrt
 
 from util.apputil import get_data
+from util.apputil import get_dot_product_score
 
 import json
 import random
@@ -20,17 +21,28 @@ DEV_MLP_FULL_FILE = '../data-train/dev_mlp_full.txt'
 TEST_MLP_FULL_FILE = '../data-test/test_mlp_full.txt'
 
 WRITE = 'w'
+CONSIDER_ROTATION = True
 
 intent_count = {}
 
-labels = {'GotoLocation': 0, 'PickupObject': 1, 'PutObject': 2,
+labels = {
+          'GotoLocation': 0,
+          'PickupObject': 1,
+          'PutObject': 2,
           'GotoLocation PickupObject': 3,
           'GotoLocation PickupObject GotoLocation': 4,
           'GotoLocation PickupObject GotoLocation PutObject': 5,
           'PickupObject GotoLocation': 6,
-          'PickupObject GotoLocation PutObject': 7, 'GotoLocation PutObject': 8,
+          'PickupObject GotoLocation PutObject': 7,
+          'GotoLocation PutObject': 8,
           'GotoLocation PickupObject PutObject': 9,
-          'PickupObject PutObject': 10}
+          'PickupObject PutObject': 10,
+          'RotateAgent PickupObject': 11,
+          'RotateAgent PutObject': 12,
+          'RotateAgent PickupObject PutObject': 13,
+          'RotateAgent PickupObject GotoLocation PutObject': 14,
+          'RotateAgent PickupObject GotoLocation': 15
+          }
 
 
 def create_BERT_compliant_dataset(input_file_name, out_file_name):
@@ -66,10 +78,9 @@ def create_mlp_full_dataset(input_file_name, out_file_name, sample_rate):
     out_file = open(out_file_name, WRITE)
     raw_train_data = get_data(input_file_name)
     out_file.write(
-        'desc' + '\t' + 'agent_pos_x' + '\t' + 'agent_pos_y' + '\t' +
-        'agent_pos_z' + '\t' + 'dist_to_obj' + '\t' +
+        'desc' + '\t' + 'dist_to_obj' + '\t' +
         'dist_to_recep' + '\t' + 'dist_obj_to_recep' +
-        '\t' + 'obj_relevant' + '\t' + 'intent' + '\n')
+        '\t' + 'agent_facing' + '\t' + 'intent' + '\n')
 
     for datum in raw_train_data:
         json_data = json.loads(datum)
@@ -88,21 +99,35 @@ def create_mlp_full_dataset(input_file_name, out_file_name, sample_rate):
         desc = desc.lower()
         visual_data = get_visual_information(json_data['scene_description'])
         intent = ' '.join(json_data['action_sequence']).strip()
+
+        # if the first action is PickupObject, consider the orientation info as well
+        if intent.strip().startswith('PickupObject') or \
+                intent.strip().startswith('PutObject'):
+
+            if random.random() < 0.5:
+                visual_data[3] = round(random.uniform(-1, 0), 2)
+            else:
+                visual_data[3] = round(random.uniform(0, 1), 2)
+
+            if visual_data[3] < 0:
+                intent = 'RotateAgent ' + intent.strip()
+                intent = intent.strip()
+
         intent = labels[intent]
 
-        if intent == 1:
+        if intent == 1 or intent == 11:
             visual_data[0] = round(random.uniform(0, 0.5), 2)
 
-        if intent == 2:
+        if intent == 2 or intent == 12:
             visual_data[1] = round(random.uniform(0, 0.5), 2)
 
-        if intent == 9:
+        if intent == 9 or intent == 13:
             visual_data[2] = round(random.uniform(0, 0.5), 2)
 
         if intent == 10:
             visual_data[2] = round(random.uniform(0, 0.5), 2)
 
-        if intent == 7:
+        if intent == 7 or intent == 14:
             visual_data[0] = round(random.uniform(0, 0.5), 2)
 
         if intent in intent_count:
@@ -128,6 +153,7 @@ def get_visual_information(scene_desc):
     current_agent_pos_x = 0
     current_agent_pos_y = 0
     current_agent_pos_z = 0
+    agent_orientation = 0
 
     for entry in scene_desc:
         if entry['entityName'] == 'agent':
@@ -135,7 +161,8 @@ def get_visual_information(scene_desc):
             current_agent_pos_y = round(entry['position'][1], 2)
             current_agent_pos_z = round(entry['position'][2], 2)
 
-    agent_pos = [current_agent_pos_x, current_agent_pos_y, current_agent_pos_z]
+            if len(entry['position']) == 6 and CONSIDER_ROTATION:
+                agent_orientation = round(entry['position'][4], 2)
 
     object_pos = [0, 0, 0]
     recep_pos = [0, 0, 0]
@@ -163,7 +190,9 @@ def get_visual_information(scene_desc):
                                        pow(recep_pos[1] - object_pos[1], 2) +
                                        pow(recep_pos[2] - object_pos[2], 2)), 2)
 
-    return [dist_to_obj, dist_to_recep, dist_obj_to_recep]
+    dot_product_score = get_dot_product_score([current_agent_pos_x, current_agent_pos_y, current_agent_pos_z],
+                                              object_pos, agent_orientation)
+    return [dist_to_obj, dist_to_recep, dist_obj_to_recep, dot_product_score]
 
 
 # create_BERT_compliant_dataset(TRAIN_DATA_PATH, TRAIN_BERT_FILE)

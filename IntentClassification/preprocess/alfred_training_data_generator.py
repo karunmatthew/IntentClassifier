@@ -212,7 +212,7 @@ def parse_json_file(file):
                 task_descs_data.append(task_desc_data)
                 # -------------------------------------------------------- #
 
-                # -------------------- Object Close to Receptable -------- #
+                # -------------------- Object Close to Receptacle -------- #
                 if len(action_sequences) == 4 and \
                         action_sequences[1] == 'PickupObject' and \
                         action_sequences[2] == 'GotoLocation' and \
@@ -285,13 +285,13 @@ def parse_json_file(file):
                     update_agent_on_action(action_sequences, count, json_object)
 
                     if count == 0:
-                        print('\n')
-                        print(high_desc)
-                        print(lang_ann["votes"])
-                        print(get_corresponding_high_pddl_action(0, json_object))
+                        # print('\n')
+                        # print(high_desc)
+                        # print(lang_ann["votes"])
+                        # print(get_corresponding_high_pddl_action(0, json_object))
                         poses = json_object['scene']['object_poses']
                         obs = [item['objectName'] for item in poses]
-                        print(obs)
+                        # print(obs)
 
                     high_desc_data = {
                         'record_type': 'high_desc',

@@ -4,11 +4,13 @@
 
 # The rasa server is started by providing the model path
 # rasa run --enable-api -m models/20200722-133414.tar.gz
+import random
 
 import requests
 import json
 import copy
 from math import sqrt
+from util.apputil import get_dot_product_score
 
 from sklearn.metrics import precision_recall_fscore_support
 
@@ -20,7 +22,8 @@ TEST_FILE_PATH = '/home/student.unimelb.edu.au/kvarghesemat/PycharmProjects/Inte
 
 READ = 'r'
 
-WITH_VISUAL = False
+WITH_VISUAL = True
+CONSIDER_ROTATION = True
 
 headers = {
     'Content-type': 'application/json'
@@ -36,6 +39,7 @@ def get_visual_information(scene_desc):
     current_agent_pos_x = 0
     current_agent_pos_y = 0
     current_agent_pos_z = 0
+    agent_orientation = 0
 
     for entry in scene_desc:
         if entry['entityName'] == 'agent':
@@ -43,7 +47,8 @@ def get_visual_information(scene_desc):
             current_agent_pos_y = round(entry['position'][1], 2)
             current_agent_pos_z = round(entry['position'][2], 2)
 
-    agent_pos = [current_agent_pos_x, current_agent_pos_y, current_agent_pos_z]
+            if len(entry['position']) == 6 and CONSIDER_ROTATION:
+                agent_orientation = round(entry['position'][4], 2)
 
     object_pos = [0, 0, 0]
     recep_pos = [0, 0, 0]
@@ -71,7 +76,9 @@ def get_visual_information(scene_desc):
                                        pow(recep_pos[1] - object_pos[1], 2) +
                                        pow(recep_pos[2] - object_pos[2], 2)), 2)
 
-    return [dist_to_obj, dist_to_recep, dist_obj_to_recep]
+    dot_product_score = get_dot_product_score([current_agent_pos_x, current_agent_pos_y, current_agent_pos_z],
+                                              object_pos, agent_orientation)
+    return [dist_to_obj, dist_to_recep, dist_obj_to_recep, dot_product_score]
 
 
 def read_test_data(file_path):
@@ -114,11 +121,23 @@ def read_test_data(file_path):
 
         if WITH_VISUAL:
             visual_data = get_visual_information(json_object['scene_description'])
+
+            # ADD code for Rotation Info
+            # if the first action is PickupObject, consider the orientation info as well
+            if action_sequence_string.strip().startswith('PickupObject') or \
+                    action_sequence_string.strip().startswith('PutObject'):
+                if random.random() < 0.5:
+                    visual_data[3] = round(random.uniform(-1, 0), 2)
+                else:
+                    visual_data[3] = round(random.uniform(0, 1), 2)
+                if visual_data[3] < 0:
+                    action_sequence_string = 'RotateAgent ' + action_sequence_string.strip()
+                    action_sequence_string = action_sequence_string.strip()
+
             desc_string = desc_string + ' @@@@@@'
             for visual_info in visual_data:
                 desc_string = desc_string + ' ' + str(visual_info)
 
-        # need to remove quotes from data input
         correct = post_to_rasa(action_sequence_string, actual_tags, correct, desc_string, predicted_tags)
 
     print('Accuracy :: ', correct / count)
@@ -139,7 +158,13 @@ def read_test_data(file_path):
                                                   'PickupObject GotoLocation PutObject',
                                                   'GotoLocation PutObject',
                                                   'GotoLocation PickupObject PutObject',
-                                                  'PickupObject PutObject']))
+                                                  'PickupObject PutObject',
+                                                  'RotateAgent PickupObject',
+                                                  'RotateAgent PutObject',
+                                                  'RotateAgent PickupObject PutObject',
+                                                  'RotateAgent PickupObject GotoLocation PutObject',
+                                                  'RotateAgent PickupObject GotoLocation'
+                                                  ]))
     print('Accuracy :: ', (correct + extra_correct) / (extra_count + count))
     print('Correct  :: ', (correct + correct + extra_correct))
     print('Total    :: ', (count + extra_count))
@@ -163,7 +188,13 @@ def read_test_data(file_path):
                                                   'PickupObject GotoLocation PutObject',
                                                   'GotoLocation PutObject',
                                                   'GotoLocation PickupObject PutObject',
-                                                  'PickupObject PutObject']))
+                                                  'PickupObject PutObject',
+                                                  'RotateAgent PickupObject',
+                                                  'RotateAgent PutObject',
+                                                  'RotateAgent PickupObject PutObject',
+                                                  'RotateAgent PickupObject GotoLocation PutObject',
+                                                  'RotateAgent PickupObject GotoLocation'
+                                                  ]))
     from sklearn.metrics import confusion_matrix
     confusion = confusion_matrix(actual_tags + extra_actual_tags, predicted_tags + extra_predicted_tags)
     print('Confusion Matrix\n')

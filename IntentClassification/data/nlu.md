@@ -25,3 +25,14 @@ data/stationary_items.txt
 ## intent:GotoLocation PickupObject PutObject
 
 ## intent:PickupObject PutObject
+
+## intent:RotateAgent PickupObject
+
+## intent:RotateAgent PutObject
+
+## intent:RotateAgent PickupObject PutObject
+
+## intent:RotateAgent PickupObject GotoLocation PutObject
+
+## intent:RotateAgent PickupObject GotoLocation
+

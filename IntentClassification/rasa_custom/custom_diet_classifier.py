@@ -453,18 +453,35 @@ class CustomDIETClassifier(IntentClassifier, EntityExtractor):
                 # visual_dense_features[:, :-1] = dense_features
                 visual_dense_features = dense_features
                 visual_data = visual_info.strip().split(' ')
+                column_number = 0
                 for v_data in visual_data:
                     float_value = float(v_data)
-                    if float_value < -0.5:
+                    if float_value < -0.5 and column_number < 3:
                         float_value = -1
                     elif float_value > 8:
                         float_value = 8
-
                     visual_col = np.full((visual_dense_features.shape[0], 1), float_value)
                     visual_dense_features = np.append(visual_dense_features, visual_col, 1)
+                    column_number += 1
+                if len(visual_data) == 3:
+                    visual_col_3 = np.full((visual_dense_features.shape[0], 1), 1)
+                    visual_dense_features = np.append(visual_dense_features, visual_col_3, 1)
+                elif len(visual_data) == 2:
+                    visual_col_2 = np.full((visual_dense_features.shape[0], 1), -1)
+                    visual_dense_features = np.append(visual_dense_features, visual_col_2, 1)
+                    visual_col_3 = np.full((visual_dense_features.shape[0], 1), 1)
+                    visual_dense_features = np.append(visual_dense_features, visual_col_3, 1)
+                elif len(visual_data) == 1:
+                    visual_col_1 = np.full((visual_dense_features.shape[0], 1), -1)
+                    visual_dense_features = np.append(visual_dense_features, visual_col_1, 1)
+                    visual_col_2 = np.full((visual_dense_features.shape[0], 1), -1)
+                    visual_dense_features = np.append(visual_dense_features, visual_col_2, 1)
+                    visual_col_3 = np.full((visual_dense_features.shape[0], 1), 1)
+                    visual_dense_features = np.append(visual_dense_features, visual_col_3, 1)
+
             elif attribute == TEXT:
                 visual_dense_features = dense_features
-                for i in range(3):
+                for i in range(4):
                     visual_col = np.full((visual_dense_features.shape[0], 1), float(-1))
                     visual_dense_features = np.append(visual_dense_features, visual_col, 1)
             else:

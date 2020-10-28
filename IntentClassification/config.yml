@@ -19,7 +19,7 @@ pipeline:
 # - name: EntitySynonymMapper          # doesnt give any performance improvement
 # - name: DIETClassifier
 - name: rasa_custom.custom_diet_classifier.CustomDIETClassifier
-  epochs: 10
+  epochs: 20
   entity_recognition: False
 #  # batch_strategy: balanced        # prevents class imbalance
 #- name: EntitySynonymMapper
