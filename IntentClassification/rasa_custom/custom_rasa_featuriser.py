@@ -71,7 +71,6 @@ class CustomRASAFeaturizer(DenseFeaturizer):
     ) -> np.ndarray:
         # Get text for attribute of each example
         batch_attribute_text = [ex.get(attribute) for ex in batch_examples]
-        # print('$$$$$$$$$$$$$$$$$$$$$$$$$', batch_attribute_text)
         sentence_encodings = self._sentence_encoding_of_text(batch_attribute_text)
 
         # convert them to a sequence of 1
@@ -125,22 +124,13 @@ class CustomRASAFeaturizer(DenseFeaturizer):
             sequence_encoding = np.tile(sequence_encoding, (1, 2))
             # sequence_encoding.shape = SEQ LENGTH, 1024
 
-            #for a in sentence_encoding:
-            #    print(a)
-
             # add sentence encoding to the end (position of cls token)
             sequence_encoding = np.concatenate(
                 [sequence_encoding, sentence_encoding], axis=0
             )
 
-            # print("Shape of Sequence Encoding :: ", sequence_encoding.shape)
-            # 1024 * length of seq
-            # for a in sequence_encoding:
-            #    print("-----------------------", len(a), '----', a)
-
             final_embeddings.append(sequence_encoding)
-        # print("Shape of Final Embedding :::::::: ", np.array(
-        # final_embeddings).shape)
+
         return np.array(final_embeddings)
 
     @staticmethod
@@ -165,12 +155,10 @@ class CustomRASAFeaturizer(DenseFeaturizer):
         return texts
 
     def _sentence_encoding_of_text(self, batch: List[Text]) -> np.ndarray:
-        # print('Batch Size :: ', len(batch))
         sentence_enc = self.sentence_encoding_signature(tf.convert_to_tensor(
             batch))[
             "default"
         ].numpy()
-        # print('Sentence Encoding Dimension : ', sentence_enc.shape)
         return sentence_enc
 
     def _sequence_encoding_of_text(self, batch: List[Text]) -> np.ndarray:
@@ -218,15 +206,6 @@ class CustomRASAFeaturizer(DenseFeaturizer):
                 batch_features = self._compute_features(batch_examples, attribute)
 
                 for index, ex in enumerate(batch_examples):
-                    # print("text_dense_features @@@@@@@@@@@@ ", ex.get(
-                    #    "text_dense_features"))
-                    # additional_features = \
-                    #    self._combine_with_existing_dense_features(
-                    #        ex, batch_features[index],
-                    #        DENSE_FEATURE_NAMES[attribute])
-                    # print('Additional Features ', additional_features.shape)
-                    # ex.set(DENSE_FEATURE_NAMES[attribute],
-                    # additional_features)
                     ex.set(
                         DENSE_FEATURE_NAMES[attribute],
                         self._combine_with_existing_dense_features(
@@ -237,8 +216,6 @@ class CustomRASAFeaturizer(DenseFeaturizer):
     def process(self, message: Message, **kwargs: Any) -> None:
 
         features = self._compute_features([message])[0]
-        # print("text_dense_features ^^^^^^^^^^^^^^", message.get(
-        #   "text_dense_features"))
         message.set(
             DENSE_FEATURE_NAMES[TEXT],
             self._combine_with_existing_dense_features(

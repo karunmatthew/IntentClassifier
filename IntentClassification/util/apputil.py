@@ -3,11 +3,68 @@ import spacy
 import torch
 import numpy as np
 import math
+from math import sqrt
+import random
 
 JSON = '.json'
 READ = "r"
+WRITE = 'w'
 
-nlp = spacy.load("en_core_web_lg")
+RASA_OUTFILE = '../data/nlu.json'
+TRAIN_SAMPLE_RATE = 40
+WITH_VISUAL = True
+CONSIDER_ROTATION = True
+MAX_ANGLE = 60
+
+RASA_SERVER = 'http://localhost:5005/model/parse'
+
+
+TRAIN_DATA_PATH = '../data-train/training_set.txt'
+DEV_DATA_PATH = '../data-train/dev_set.txt'
+TEST_DATA_PATH = '../data-test/testing_set.txt'
+
+TRAIN_MLP_FULL_FILE = '../data-train/train_mlp_full.txt'
+DEV_MLP_FULL_FILE = '../data-train/dev_mlp_full.txt'
+TEST_MLP_FULL_FILE = '../data-test/test_mlp_full.txt'
+
+
+LANG_VISUAL_DELIMITER = '@@@@@@'
+LABELS = ['GotoLocation',
+          'PickupObject',
+          'PutObject',
+          'GotoLocation PickupObject',
+          'GotoLocation PickupObject GotoLocation',
+          'GotoLocation PickupObject GotoLocation PutObject',
+          'PickupObject GotoLocation',
+          'PickupObject GotoLocation PutObject',
+          'GotoLocation PutObject',
+          'GotoLocation PickupObject PutObject',
+          'PickupObject PutObject',
+          'RotateAgent PickupObject',
+          'RotateAgent PutObject',
+          'RotateAgent PickupObject PutObject',
+          'RotateAgent PickupObject GotoLocation PutObject',
+          'RotateAgent PickupObject GotoLocation'
+          ]
+
+LABELS_MAP = {
+          'GotoLocation': 0,
+          'PickupObject': 1,
+          'PutObject': 2,
+          'GotoLocation PickupObject': 3,
+          'GotoLocation PickupObject GotoLocation': 4,
+          'GotoLocation PickupObject GotoLocation PutObject': 5,
+          'PickupObject GotoLocation': 6,
+          'PickupObject GotoLocation PutObject': 7,
+          'GotoLocation PutObject': 8,
+          'GotoLocation PickupObject PutObject': 9,
+          'PickupObject PutObject': 10,
+          'RotateAgent PickupObject': 11,
+          'RotateAgent PutObject': 12,
+          'RotateAgent PickupObject PutObject': 13,
+          'RotateAgent PickupObject GotoLocation PutObject': 14,
+          'RotateAgent PickupObject GotoLocation': 15
+          }
 
 
 def get_json_file_paths(folder_path):
@@ -59,6 +116,7 @@ def get_default_device():
 
 
 def get_object_from_sentence(text):
+    nlp = spacy.load("en_core_web_lg")
     doc = nlp(text)
     for chunk in doc.noun_chunks:
         print(chunk.text, ' : ', chunk.root.text, ' : ', chunk.root.dep_, ' : ',
@@ -66,5 +124,23 @@ def get_object_from_sentence(text):
     return ''
 
 
-print(get_dot_product([6, 8], [3, 4]))
-print(get_dot_product_score([1, 3, -3], [-3, 444, -5], 180))
+def remove_special_characters(string_text):
+    string_text = string_text.replace('\"', '')
+    string_text = string_text.replace('\n', '')
+    string_text = string_text.replace('.', '')
+    string_text = string_text.replace(',', '')
+    string_text = string_text.replace(';', '')
+    string_text = string_text.lower()
+    return string_text
+
+
+# returns the distance between two 3D co-ordinates
+def get_L2_distance(X1, X2):
+    return round(sqrt(pow(X1[0] - X2[0], 2) +
+                      pow(X1[1] - X2[1], 2) +
+                      pow(X1[2] - X2[2], 2)), 2)
+
+
+# print(get_dot_product_score([1, 3, -3], [-3, 1, -5], 180))
+# print(get_dot_product_score([1, 3, -3], [5, 1, -5], 180))
+# print(get_agent_facing_direction_vector(180))

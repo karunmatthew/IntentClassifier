@@ -1,3 +1,7 @@
+#
+# Custom tokenizer for ConveRT - Not used as ConveRT has been removed from the pipeline
+#
+
 from typing import Any, Dict, List, Text
 import sys
 from rasa.nlu.constants import DENSE_FEATURE_NAMES, TEXT

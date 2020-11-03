@@ -5,3 +5,4 @@ results/*
 venv/*
 data-input/*
 models/*
+*.pyc

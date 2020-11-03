@@ -1,31 +1,41 @@
 # Configuration for Rasa NLU.
 # https://rasa.com/docs/rasa/nlu/components/
 language: en
-
 pipeline:
 - name: rasa_custom.custom_spacy_nlp.CustomSpacyNLP
   model: en_core_web_lg
   case_sensitive: False
-# - name: rasa_custom.custom_rasa_tokenizer.CustomRasaTokenizer
 - name: rasa_custom.custom_spacy_tokenizer.CustomSpacyTokenizer
-# - name: ConveRTTokenizer
-# - name: rasa_custom.custom_rasa_featuriser.CustomRASAFeaturizer
-# - name: ConveRTFeaturizer
 - name: rasa_custom.custom_spacy_featuriser.CustomSpacyFeaturizer
   pooling: mean
 - name: RegexFeaturizer
 - name: LexicalSyntacticFeaturizer
 - name: CRFEntityExtractor
-# - name: EntitySynonymMapper          # doesnt give any performance improvement
-# - name: DIETClassifier
 - name: rasa_custom.custom_diet_classifier.CustomDIETClassifier
   epochs: 20
   entity_recognition: False
 #  # batch_strategy: balanced        # prevents class imbalance
-#- name: EntitySynonymMapper
 - name: ResponseSelector
   epochs: 100
 
+# Configuration for Rasa Core.
+# https://rasa.com/docs/rasa/core/policies/
+policies:
+  - name: MemoizationPolicy
+  - name: TEDPolicy
+    max_history: 5
+    epochs: 100
+  - name: MappingPolicy
+
+
+
+#- name: EntitySynonymMapper
+# - name: rasa_custom.custom_rasa_tokenizer.CustomRasaTokenizer
+# - name: ConveRTTokenizer
+# - name: rasa_custom.custom_rasa_featuriser.CustomRASAFeaturizer
+# - name: ConveRTFeaturizer
+# - name: EntitySynonymMapper          # doesnt give any performance improvement
+# - name: DIETClassifier
 # pipeline:
 #  - name: custom_rasa_tokenizer.CustomRasaTokenizer
 #  - name: custom_rasa_featuriser.CustomRASAFeaturizer
@@ -43,17 +53,6 @@ pipeline:
 #  - name: EntitySynonymMapper
 #  - name: ResponseSelector
 #    epochs: 100
-
-# Configuration for Rasa Core.
-# https://rasa.com/docs/rasa/core/policies/
-policies:
-  - name: MemoizationPolicy
-  - name: TEDPolicy
-    max_history: 5
-    epochs: 100
-  - name: MappingPolicy
-
-
 #  intent_tokenization_flag: True
 #  intent_split_symbol: +
 #  case_sensitive: False

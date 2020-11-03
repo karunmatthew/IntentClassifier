@@ -1,14 +1,12 @@
 import typing
 from typing import Text, List, Any, Type
-import sys
 
 from rasa.nlu.tokenizers.tokenizer import Token, Tokenizer
 from rasa.nlu.components import Component
-from rasa.nlu.utils.spacy_utils import SpacyNLP
 from rasa_custom.custom_spacy_nlp import CustomSpacyNLP
 from rasa.nlu.training_data import Message
-
 from rasa.nlu.constants import SPACY_DOCS
+from util.apputil import LANG_VISUAL_DELIMITER
 
 if typing.TYPE_CHECKING:
     from spacy.tokens.doc import Doc  # pytype: disable=import-error
@@ -35,27 +33,21 @@ class CustomSpacyTokenizer(Tokenizer):
     def tokenize(self, message: Message, attribute: Text) -> List[Token]:
 
         # extract the visual information from the text information
-        visual_data = []
-        if '@@@@@@' in message.text:
-            visual_data_string = message.text[message.text.index('@@@@@@')+7:]
+        if LANG_VISUAL_DELIMITER in message.text:
+            visual_data_string = message.text[message.text.index(LANG_VISUAL_DELIMITER)+7:]
             message.set('visual_info', visual_data_string.strip())
-            message.text = message.text[0: message.text.index('@@@@@@')]
-            # message.set('text', message.text[0: message.text.index('@@@@@@')])
+            message.text = message.text[0: message.text.index(LANG_VISUAL_DELIMITER)]
 
         doc = self.get_doc(message, attribute)
 
         tokens = []
         for t in doc:
-            if '@@@@@@' in t.text:
+            # do not send the visual information to the feedforward layers
+            # that lead to the transformer module
+            if LANG_VISUAL_DELIMITER in t.text:
                 break
             tokens.append(Token(t.text, t.idx, lemma=t.lemma_, data={POS_TAG_KEY: self._tag_of_token(t)}))
 
-        '''return [
-            Token(
-                t.text, t.idx, lemma=t.lemma_, data={POS_TAG_KEY: self._tag_of_token(t)}
-            )
-            for t in doc
-        ]'''
         return tokens
 
     @staticmethod

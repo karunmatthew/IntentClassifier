@@ -7,6 +7,8 @@ from rasa.nlu.config import RasaNLUModelConfig, override_defaults
 from rasa.nlu.training_data import Message, TrainingData
 from rasa.nlu.model import InvalidModelError
 
+from util.apputil import LANG_VISUAL_DELIMITER
+
 logger = logging.getLogger(__name__)
 
 if typing.TYPE_CHECKING:
@@ -105,8 +107,8 @@ class CustomSpacyNLP(Component):
             # Another option could be to neglect tokenization of the attribute of this example, but since we are
             # processing in batch mode, it would get complex to collect all processed and neglected examples.
             text = ""
-        elif '@@@@@@' in text:
-            text = text[0: text.index('@@@@@@')]
+        elif LANG_VISUAL_DELIMITER in text:
+            text = text[0: text.index(LANG_VISUAL_DELIMITER)]
 
         if self.component_config.get("case_sensitive"):
             return text

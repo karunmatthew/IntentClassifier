@@ -1,4 +1,4 @@
-
+from util.apputil import CONSIDER_ROTATION, get_L2_distance, get_dot_product_score
 NO_OPERATION = 'NoOp'
 
 
@@ -19,12 +19,12 @@ def get_task_related_objects(json_object):
     related_objects = []
     high_pddl = json_object['plan']['high_pddl']
     for action in high_pddl:
-        related_object, receptable_object = get_object_and_receptacle(action)
+        related_object, receptacle_object = get_object_and_receptacle(action)
         if not related_object is None and not related_object in related_objects:
             related_objects.append(related_object)
-        if not receptable_object is None \
-                and not receptable_object in related_objects:
-            related_objects.append(receptable_object)
+        if not receptacle_object is None \
+                and not receptacle_object in related_objects:
+            related_objects.append(receptacle_object)
     return related_objects
 
 
@@ -62,6 +62,48 @@ def get_object_and_receptacle(action):
 
 def get_floor_plan(json_object):
     return json_object['scene']['floor_plan']
+
+
+def get_visual_information(scene_desc):
+    dist_to_obj = -1
+    dist_to_recep = -1
+    dist_obj_to_recep = -1
+    obj_relevant = 0
+    recep_relevant = 0
+    agent_pos = [0, 0, 0]
+    agent_orientation = 0
+    object_pos = [0, 0, 0]
+    recep_pos = [0, 0, 0]
+
+    for entry in scene_desc:
+        if entry['entityName'] == 'agent':
+            agent_pos[0] = round(entry['position'][0], 2)
+            agent_pos[1] = round(entry['position'][1], 2)
+            agent_pos[2] = round(entry['position'][2], 2)
+
+            # if you receive 6oF position information of agent, get the yaw
+            if len(entry['position']) == 6 and CONSIDER_ROTATION:
+                agent_orientation = round(entry['position'][4], 2)
+
+    for entry in scene_desc:
+        if not entry['entityName'] == 'agent' and entry['object_type'] == \
+                'simple':
+            obj_relevant = entry['relevant']
+            object_pos = entry['position']
+            if obj_relevant == 1:
+                dist_to_obj = get_L2_distance(agent_pos, object_pos)
+        elif not entry['entityName'] == 'agent' and entry['object_type'] == \
+                'receptable':
+            recep_relevant = entry['relevant']
+            recep_pos = entry['position']
+            if recep_relevant == 1:
+                dist_to_recep = get_L2_distance(agent_pos, recep_pos)
+
+    if obj_relevant == 1 and recep_relevant == 1:
+        dist_obj_to_recep = get_L2_distance(recep_pos, object_pos)
+
+    dot_product_score = get_dot_product_score(agent_pos, object_pos, agent_orientation)
+    return [dist_to_obj, dist_to_recep, dist_obj_to_recep, dot_product_score]
 
 
 # returns true if the trial is of the passed task type

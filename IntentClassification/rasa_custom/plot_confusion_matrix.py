@@ -1,6 +1,3 @@
-import numpy as np
-
-
 def plot_confusion_matrix(cm,
                           target_names,
                           title='Confusion matrix',
@@ -60,7 +57,6 @@ def plot_confusion_matrix(cm,
 
     if normalize:
         cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
-
 
     thresh = cm.max() / 1.5 if normalize else cm.max() / 2
     for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):

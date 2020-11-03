@@ -437,20 +437,15 @@ class CustomDIETClassifier(IntentClassifier, EntityExtractor):
         sparse_features = None
         dense_features = None
         visual_dense_features = None
-        # print('Message', message.text)
-        # print('Attribute', attribute)
 
         if message.get(SPARSE_FEATURE_NAMES[attribute]) is not None:
             sparse_features = message.get(SPARSE_FEATURE_NAMES[attribute])
 
-        # print('DENSE_FEATURE_NAMES[attribute] :', DENSE_FEATURE_NAMES[attribute])
         if message.get(DENSE_FEATURE_NAMES[attribute]) is not None:
             dense_features = message.get(DENSE_FEATURE_NAMES[attribute])
             visual_info = message.get('visual_info')
-            print('Visual Info', visual_info)
+            print('Visual Info: ', visual_info)
             if attribute == TEXT and visual_info is not None:
-                # visual_dense_features = np.zeros((dense_features.shape[0], dense_features.shape[1] + 3))
-                # visual_dense_features[:, :-1] = dense_features
                 visual_dense_features = dense_features
                 visual_data = visual_info.strip().split(' ')
                 column_number = 0
@@ -487,9 +482,6 @@ class CustomDIETClassifier(IntentClassifier, EntityExtractor):
             else:
                 visual_dense_features = dense_features
 
-            # print('Dense Features Shape', dense_features.shape)
-            # print('Visual Dense Features Shape', visual_dense_features.shape)
-
         if sparse_features is not None and dense_features is not None:
             if sparse_features.shape[0] != dense_features.shape[0]:
                 raise ValueError(
@@ -507,7 +499,6 @@ class CustomDIETClassifier(IntentClassifier, EntityExtractor):
             and not self.component_config[ENTITY_RECOGNITION]
             and attribute != INTENT
         ):
-            print('Reached inside no transformer use')
             sparse_features = train_utils.sequence_to_sentence_features(sparse_features)
             dense_features = train_utils.sequence_to_sentence_features(dense_features)
 

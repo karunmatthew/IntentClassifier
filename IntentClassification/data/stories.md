@@ -1,4 +1,4 @@
-## GotoLocation path
+## GotoLocation
 * GotoLocation
   - utter_0
 

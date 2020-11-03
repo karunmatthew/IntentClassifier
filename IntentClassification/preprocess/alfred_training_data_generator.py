@@ -225,7 +225,7 @@ def parse_json_file(file):
                                                               'PickupObject',
                                                               'PutObject']}
                     GPP_related_objects = copy.deepcopy(get_task_related_objects(json_object))
-                    # update position of receptable as position of object
+                    # update position of receptacle as position of object
                     GPP_related_objects[1]['position'] = GPP_related_objects[0]['position']
                     task_desc_data_GPP['scene_description'] = [copy.deepcopy(
                         agent_data)] + GPP_related_objects
@@ -283,15 +283,6 @@ def parse_json_file(file):
                     # certain actions signal that the agent's location has
                     # changed and requires it to be updated
                     update_agent_on_action(action_sequences, count, json_object)
-
-                    if count == 0:
-                        # print('\n')
-                        # print(high_desc)
-                        # print(lang_ann["votes"])
-                        # print(get_corresponding_high_pddl_action(0, json_object))
-                        poses = json_object['scene']['object_poses']
-                        obs = [item['objectName'] for item in poses]
-                        # print(obs)
 
                     high_desc_data = {
                         'record_type': 'high_desc',
@@ -363,7 +354,7 @@ def update_agent_on_action(action_sequences, count, json_object):
         update_agent_data(json_object['plan']['high_pddl']
                           [count]['planner_action']['objectId'])
     # The agents location is updated the location of the
-    # receptable when the agent performs a put-down action
+    # receptacle when the agent performs a put-down action
     elif action_sequences[count] == PUTDOWN_ACTION:
         update_agent_data(json_object['plan']['high_pddl']
                           [count]['planner_action']

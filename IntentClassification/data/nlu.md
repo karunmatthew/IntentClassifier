@@ -1,9 +1,3 @@
-## lookup:kitchen_items
-data/kitchen_items.txt
-
-## lookup:stationary_items
-data/stationary_items.txt
-
 ## intent:GotoLocation
 
 ## intent:PickupObject

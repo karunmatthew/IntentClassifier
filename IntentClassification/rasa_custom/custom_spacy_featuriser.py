@@ -40,7 +40,6 @@ class CustomSpacyFeaturizer(DenseFeaturizer):
     def __init__(self, component_config: Optional[Dict[Text, Any]] = None):
         super().__init__(component_config)
         print('LOADING CUSTOM SPACY FEATURIZER')
-
         self.pooling_operation = self.component_config[POOLING]
 
     def _features_for_doc(self, doc: "Doc") -> np.ndarray:
