@@ -61,15 +61,12 @@ def add_noise(action_sequence_string, visual_data):
             action_sequence_string.strip().startswith('PutObject'):
 
         if random.random() < 0.5:
-            # visual_data[3] = round(random.uniform(-1, 0), 2)
             visual_data[3] = round(random.uniform(-1, math.cos(math.radians(MAX_ANGLE))), 2)
         else:
-            # visual_data[3] = round(random.uniform(0, 1), 2)
             visual_data[3] = round(random.uniform(math.cos(math.radians(MAX_ANGLE)), 1), 2)
 
-        if math.degrees(math.acos(visual_data[3])) > MAX_ANGLE:
+        if math.ceil(math.degrees(math.acos(visual_data[3]))) >= MAX_ANGLE:
             action_sequence_string = 'RotateAgent ' + action_sequence_string.strip()
-            action_sequence_string = action_sequence_string.strip()
 
     action_sequence_string = action_sequence_string.strip()
     return action_sequence_string, visual_data

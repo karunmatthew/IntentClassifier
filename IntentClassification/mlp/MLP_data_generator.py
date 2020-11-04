@@ -45,7 +45,7 @@ def create_mlp_specific_dataset(input_file_name, out_file_name, sample_rate):
 
 
 intent_count = {}
-create_mlp_specific_dataset(TRAIN_DATA_PATH, TRAIN_MLP_FULL_FILE, 100)
+create_mlp_specific_dataset(TRAIN_DATA_PATH, TRAIN_MLP_FULL_FILE, 10)
 print(intent_count)
 
 intent_count = {}

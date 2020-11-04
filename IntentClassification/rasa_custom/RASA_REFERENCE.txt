@@ -51,6 +51,11 @@ rasa run --enable-api -m models/20200930-110228_spacy_20.tar.gz
 
 rasa run --enable-api -m models/20201103-012125_train_20_rotate_max_60.tar.gz
 rasa run --enable-api -m models/20201103-173305_train_40_rotate_max_60.tar.gz
+rasa run --enable-api -m models/20201104-015523_train_40_rotate_60.tar.gz
+rasa run --enable-api -m models/20201104-030516_train_20_rotate_max_60.tar.gz
+rasa run --enable-api -m models/20201104-114530_train_10_rotate_max_60.tar.gz
+rasa run --enable-api -m models/20201104-122959_train_10_rotate_max_angle_ceil_60.tar.gz
+
 
 export PYTHONPATH=/home/karun/PycharmProjects/IntentClassification/rasa_custom/:$PYTHONPATH
 

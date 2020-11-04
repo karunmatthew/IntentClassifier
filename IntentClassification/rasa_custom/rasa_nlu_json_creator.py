@@ -1,10 +1,14 @@
-# This program creates the nlu.json file which RASA uses for training
-# The file augments the data already present in nlu.md
-# The generated nlu.json file must be copied to
+# Author     :  Karun Mathew
+# Student Id :  1007247
+#
+# This program creates the nlu.json file which RASA uses for training the model
+# The generated nlu.json file must be present in the 'data' folder of the project
+# which is the default location that RASA looks for to find the training samples
 
 import json
 import copy
 import random
+
 from util.noise_generator import add_noise, get_pick_up_noise, get_put_down_noise
 from util.alfred_json_parser import get_visual_information
 from util.apputil import remove_special_characters, \

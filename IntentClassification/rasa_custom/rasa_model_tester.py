@@ -13,9 +13,9 @@ import copy
 from math import sqrt
 from sklearn.metrics import precision_recall_fscore_support
 from sklearn.metrics import confusion_matrix
-from util.apputil import get_dot_product_score
-from util.apputil import get_visual_information, READ, RASA_SERVER, DEV_DATA_PATH,\
-    MAX_ANGLE, WITH_VISUAL, CONSIDER_ROTATION, LABELS, LANG_VISUAL_DELIMITER
+from util.alfred_json_parser import get_visual_information
+from util.apputil import READ, RASA_SERVER, DEV_DATA_PATH,\
+    MAX_ANGLE, WITH_VISUAL, LABELS, LANG_VISUAL_DELIMITER
 
 
 headers = {
