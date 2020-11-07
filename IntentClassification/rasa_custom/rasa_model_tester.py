@@ -64,13 +64,13 @@ def read_test_data(file_path):
             # orientation info as well when deciding the intent
             if action_sequence_string.strip().startswith('PickupObject') or \
                     action_sequence_string.strip().startswith('PutObject'):
+
                 if random.random() < 0.5:
-                    visual_data[3] = round(random.uniform(-1, 0), 2)
-                else:
-                    visual_data[3] = round(random.uniform(0, 1), 2)
-                if math.degrees(math.acos(visual_data[3])) > MAX_ANGLE:
+                    # Needs to rotate to pick the object
+                    visual_data[3] = round(random.uniform(-1, math.cos(math.radians(MAX_ANGLE))), 2)
                     action_sequence_string = 'RotateAgent ' + action_sequence_string.strip()
-                    action_sequence_string = action_sequence_string.strip()
+                else:
+                    visual_data[3] = round(random.uniform(math.cos(math.radians(MAX_ANGLE)), 1), 2)
 
             desc_string = desc_string + ' ' + LANG_VISUAL_DELIMITER
             for visual_info in visual_data:

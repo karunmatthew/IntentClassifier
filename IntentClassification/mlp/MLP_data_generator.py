@@ -1,3 +1,30 @@
+# Author     :  Karun Mathew
+# Student Id :  1007247
+#
+# This python class generates training data in the format that
+# is expected by the baseline classifier, a MultiLayer Perceptron
+#
+# The format is shown below,
+# ---------------------------------------------------------------------------------------------------------
+# desc	                            dist_to_obj dist_to_recep	dist_obj_to_recep	agent_facing	intent
+# ---------------------------------------------------------------------------------------------------------
+# put a statue on a coffee table	0.35	    1.84        	2.03	            0.68        	7
+# ---------------------------------------------------------------------------------------------------------
+# put a statue on a coffee table	4.47	    4.47        	0.14            	-0.4	        9
+# ---------------------------------------------------------------------------------------------------------
+# walk to the fridge	            -1	        3.2	            -1	                1   	        0
+# ---------------------------------------------------------------------------------------------------------
+# turn right and go to the coffee
+# maker then turn right and face
+# the kitchen counter pick up the
+# egg from in front of the yellow
+# vase turn around and bring the
+# egg to the black refrigerator
+# open the fridge put the egg on
+# the same shelf as the pot and
+# then close the fridge	            1.73	    3.52	        3.2             	-0.56	        5
+# ---------------------------------------------------------------------------------------------------------
+
 from util.noise_generator import add_noise
 from util.alfred_json_parser import get_visual_information
 from util.apputil import get_data, remove_special_characters, \
@@ -6,12 +33,19 @@ from util.apputil import get_data, remove_special_characters, \
 import json
 import random
 
+TRAIN_SAMPLE_RATE = 40
+TEST_SAMPLE_RATE = 100
+VALIDATION_SET_SAMPLE_RATE = 100
 
-def create_mlp_specific_dataset(input_file_name, out_file_name, sample_rate):
+
+# this method creates a dataset by reading the ALFRED data file at the specified
+# 'input_file_path' and creates a new dataset saved as 'out_file_name'. The sample_rate
+# decides the percentage of data of the original data is copied into the output
+def create_mlp_specific_dataset(input_file_path, out_file_name, sample_rate):
     global intent_count
     out_file = open(out_file_name, WRITE)
-    raw_train_data = get_data(input_file_name)
-    # print out the header
+    raw_train_data = get_data(input_file_path)
+    # prints out the header
     out_file.write(
         'desc' + '\t' + 'dist_to_obj' + '\t' +
         'dist_to_recep' + '\t' + 'dist_obj_to_recep' +
@@ -21,8 +55,7 @@ def create_mlp_specific_dataset(input_file_name, out_file_name, sample_rate):
         json_data = json.loads(datum)
 
         # sample the data at the provided rate
-        number = random.randint(0, 100)
-        if number > sample_rate:
+        if random.randint(0, 100) > sample_rate:
             continue
 
         desc = ' '.join(json_data['desc']).strip()
@@ -30,6 +63,7 @@ def create_mlp_specific_dataset(input_file_name, out_file_name, sample_rate):
 
         visual_data = get_visual_information(json_data['scene_description'])
         action_sequence = ' '.join(json_data['action_sequence']).strip()
+        # add noise to the data records for better generalization
         action_sequence, visual_data = add_noise(action_sequence, visual_data)
 
         intent = LABELS_MAP[action_sequence]
@@ -44,14 +78,15 @@ def create_mlp_specific_dataset(input_file_name, out_file_name, sample_rate):
     out_file.close()
 
 
+# Create train, validation and test data for the baseline model
 intent_count = {}
-create_mlp_specific_dataset(TRAIN_DATA_PATH, TRAIN_MLP_FULL_FILE, 10)
+create_mlp_specific_dataset(TRAIN_DATA_PATH, TRAIN_MLP_FULL_FILE, TRAIN_SAMPLE_RATE)
 print(intent_count)
 
 intent_count = {}
-create_mlp_specific_dataset(TEST_DATA_PATH, TEST_MLP_FULL_FILE, 100)
+create_mlp_specific_dataset(TEST_DATA_PATH, TEST_MLP_FULL_FILE, TEST_SAMPLE_RATE)
 print(intent_count)
 
 intent_count = {}
-create_mlp_specific_dataset(DEV_DATA_PATH, DEV_MLP_FULL_FILE, 100)
+create_mlp_specific_dataset(DEV_DATA_PATH, DEV_MLP_FULL_FILE, VALIDATION_SET_SAMPLE_RATE)
 print(intent_count)

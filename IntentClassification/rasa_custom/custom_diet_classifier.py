@@ -311,7 +311,7 @@ class CustomDIETClassifier(IntentClassifier, EntityExtractor):
         self._entity_tag_specs = entity_tag_specs
 
         self.model = model
-
+        print('DIET Embedding dimension', self.component_config[EMBEDDING_DIMENSION])
         self._label_data: Optional[RasaModelData] = None
         self._data_example: Optional[Dict[Text, List[np.ndarray]]] = None
 

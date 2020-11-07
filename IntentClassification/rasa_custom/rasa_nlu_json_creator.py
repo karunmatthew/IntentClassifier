@@ -9,7 +9,7 @@ import json
 import copy
 import random
 
-from util.noise_generator import add_noise, get_pick_up_noise, get_put_down_noise
+from util.noise_generator import add_noise, get_close_pick_up_noise, get_close_put_down_noise
 from util.alfred_json_parser import get_visual_information
 from util.apputil import remove_special_characters, \
     TRAIN_DATA_PATH, RASA_OUTFILE, READ, TRAIN_SAMPLE_RATE, WITH_VISUAL, LANG_VISUAL_DELIMITER
@@ -66,19 +66,19 @@ def create_rasa_training_set(file_path, out_file_path):
 
         action_sequence_string, visual_data = add_noise(action_sequence_string, visual_data)
 
+        intent_dist[action_sequence_string] = intent_dist.get(action_sequence_string, 0) + 1
+
         # if the action is pick up, then add a sample for go and pick up as well
         if action_sequence_string.strip() == 'PickupObject' and WITH_VISUAL:
-            # TODO ensure that the orientation of both agent and object is the same
-
             go_and_pick_intent = {'text': desc_string.strip() + ' ' +
-                                          LANG_VISUAL_DELIMITER + ' ' + get_pick_up_noise(),
+                                          LANG_VISUAL_DELIMITER + ' ' + get_close_pick_up_noise(),
                                   'intent': 'GotoLocation PickupObject'}
             intents.append(go_and_pick_intent)
             count += 1
 
         # if the action is put, then add a sample for go and put as well
         if action_sequence_string.strip() == 'PutObject' and WITH_VISUAL:
-            go_and_put_intent = {'text': desc_string.strip() + ' ' + LANG_VISUAL_DELIMITER + ' ' + get_put_down_noise(),
+            go_and_put_intent = {'text': desc_string.strip() + ' ' + LANG_VISUAL_DELIMITER + ' ' + get_close_put_down_noise(),
                                  'intent': 'GotoLocation PutObject'}
             intents.append(go_and_put_intent)
             count += 1
@@ -107,6 +107,8 @@ def create_rasa_training_set(file_path, out_file_path):
             intents.append(conj_with_visual)
             count += 1
 
+    print('intent distribution', intent_dist)
+    intent_dist = {}
     for record in intents:
         intent_dist[record['intent']] = intent_dist.get(record['intent'], 0) + 1
     print('intent distribution', intent_dist)

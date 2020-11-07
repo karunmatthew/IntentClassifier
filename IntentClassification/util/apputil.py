@@ -11,10 +11,11 @@ READ = "r"
 WRITE = 'w'
 
 RASA_OUTFILE = '../data/nlu.json'
-TRAIN_SAMPLE_RATE = 10
+TRAIN_SAMPLE_RATE = 20
 WITH_VISUAL = True
 CONSIDER_ROTATION = True
 MAX_ANGLE = 60
+ARM_LENGTH = 0.5
 
 RASA_SERVER = 'http://localhost:5005/model/parse'
 
@@ -89,7 +90,7 @@ def get_data(input_file):
 
 
 def get_dot_product(x, y):
-    return round(np.dot(x, y) / (np.sqrt(np.dot(x, x)) * np.sqrt(np.dot(y, y))), 2)
+    return round(np.dot(x, y) / (np.sqrt(np.dot(x, x)) * np.sqrt(np.dot(y, y))), 4)
 
 
 def get_agent_facing_direction_vector(agent_face_direction):

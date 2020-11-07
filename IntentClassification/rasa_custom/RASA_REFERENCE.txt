@@ -55,7 +55,10 @@ rasa run --enable-api -m models/20201104-015523_train_40_rotate_60.tar.gz
 rasa run --enable-api -m models/20201104-030516_train_20_rotate_max_60.tar.gz
 rasa run --enable-api -m models/20201104-114530_train_10_rotate_max_60.tar.gz
 rasa run --enable-api -m models/20201104-122959_train_10_rotate_max_angle_ceil_60.tar.gz
+rasa shell nlu -m models/20201104-122959_train_10_rotate_max_angle_ceil_60.tar.gz
+rasa run --enable-api -m models/20201105-211519_train_20_max_rotate_60_embed_30.tar.gz
 
+pick up the glass vase on the table @@@@@@ 0.0 -1 -1 0.46
 
 export PYTHONPATH=/home/karun/PycharmProjects/IntentClassification/rasa_custom/:$PYTHONPATH
 

@@ -10,9 +10,11 @@ pipeline:
   pooling: mean
 - name: RegexFeaturizer
 - name: LexicalSyntacticFeaturizer
+  features: [["prefix5", "prefix2", "BOS", "EOS", "digit", "pos", "pos2"],["prefix5", "prefix2", "BOS", "EOS", "digit", "pos", "pos2"],["prefix5", "prefix2", "BOS", "EOS", "digit", "pos", "pos2"]]
 - name: CRFEntityExtractor
 - name: rasa_custom.custom_diet_classifier.CustomDIETClassifier
-  epochs: 20
+  epochs: 40
+  embedding_dimension: 40
   entity_recognition: False
 #  # batch_strategy: balanced        # prevents class imbalance
 - name: ResponseSelector
