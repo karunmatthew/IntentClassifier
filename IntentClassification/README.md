@@ -34,4 +34,4 @@ Dependencies for Spacy
 
 $ pip3 install rasa[spacy] <br/>
 $ python3 -m spacy download en_core_web_lg <br/>
-$ python3 -m spacy link en_core_web_md en <br/>
+$ python3 -m spacy link en_core_web_lg en <br/>
