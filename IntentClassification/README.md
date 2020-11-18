@@ -22,9 +22,9 @@ Contains the training data input
 
 
 
-$ sudo apt update
-$ sudo apt install python3-dev python3-pip
-$ python3 -m venv ./venv
-$ source ./venv/bin/activate
-$ pip install -U pip
-$ pip install rasa
+$ sudo apt update <br/>
+$ sudo apt install python3-dev python3-pip <br/>
+$ python3 -m venv ./venv <br/>
+$ source ./venv/bin/activate <br/>
+$ pip install -U pip <br/>
+$ pip install rasa <br/>
