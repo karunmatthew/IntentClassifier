@@ -28,3 +28,10 @@ $ python3 -m venv ./venv <br/>
 $ source ./venv/bin/activate <br/>
 $ pip install -U pip <br/>
 $ pip install rasa <br/>
+$ pip3 install rasa <br/>
+
+Dependencies for Spacy
+
+$ pip3 install rasa[spacy] <br/>
+$ python3 -m spacy download en_core_web_lg <br/>
+$ python3 -m spacy link en_core_web_md en <br/>
