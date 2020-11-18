@@ -3,7 +3,7 @@ README file for Intent Classification
 
 ## BASELINE SOLUTION
 
-The baseline solution can be found in baseline folder. The baseline solution uses a set of generic rules to identify the intent
+The baseline solution can be found in mlp folder. The baseline solution uses a set of generic rules to identify the intent
 
 
 ## RASA
