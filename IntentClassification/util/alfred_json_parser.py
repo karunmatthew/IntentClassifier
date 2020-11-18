@@ -1,3 +1,8 @@
+# Author     :  Karun Mathew
+# Student Id :  1007247
+#
+# This program provides a couple of helper methods to parse the ALFRED's json file
+
 from util.apputil import CONSIDER_ROTATION, get_L2_distance, get_dot_product_score
 NO_OPERATION = 'NoOp'
 
@@ -64,6 +69,13 @@ def get_floor_plan(json_object):
     return json_object['scene']['floor_plan']
 
 
+# extracts and returns the visual features that we have identified
+# for each task sample
+# The visual features are :
+# 1. Distance from agent to object
+# 2. Distance from agent to receptacle
+# 3. Distance between agent and receptacle
+# 4. Angle between the object and the direction the agent is facing
 def get_visual_information(scene_desc):
     dist_to_obj = -1
     dist_to_recep = -1
@@ -106,9 +118,9 @@ def get_visual_information(scene_desc):
     return [dist_to_obj, dist_to_recep, dist_obj_to_recep, dot_product_score]
 
 
-# returns true if the trial is of the passed task type
+# returns true only if the trial is of the passed task type
+# In the project we only processed tasks of type 'pick and place'
 def is_of_task_type(json_object, filter_on_task_type):
-    return True
     if filter_on_task_type == '':
         return True
     elif 'task_type' in json_object and \

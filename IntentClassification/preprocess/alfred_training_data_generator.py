@@ -1,34 +1,39 @@
+# Author     :  Karun Mathew
+# Student Id :  1007247
+#
+# --------------------------------
+# ALFRED DATA PARSER AND GENERATOR
+# --------------------------------
+#
+# This program parses the data from the ALFRED dataset and processes into a format that
+# both the baseline classifier and the RASA system can use. This is the first of the
+# data preprocessing steps. After the data is generated, run the MLP_data_generator.py to
+# to generate the training data for the baseline model. Run the rasa_training_data_generator.py
+# to generate the training data for RASA intent classifier
+#
+#
+# Every goal that is to be achieved in a alfred json file is called a task-desc (or task description)
+# This goal can be achieved by performing a series of low level steps called high-desc
+#
+# Task-descs are multi-intent and can be associated with multiple actions
+# High-descs are single intent
+# We also take combinations of high-desc commands in order to obtain another set of
+# multi-intent samples
+#
+# This programs creates the above type of samples from the raw alfred data and is then transformed
+# into a format required for downstream analysis by other processing programs.
+
 import json
 import copy
 import sys
 
-from util.apputil import get_json_file_paths
+from util.apputil import get_json_file_paths, TRAIN_DATA_PATH, TRAIN_PERCENT,\
+    DEV_PERCENT, FOLDER_PATH, PICK_AND_PLACE, PICKUP_ACTION, PUTDOWN_ACTION,\
+    APPEND, DEV_DATA_PATH, TEST_DATA_PATH
 from util.alfred_json_parser import get_action_sequence, \
     get_object_and_receptacle, is_of_task_type, get_task_related_objects, \
     get_floor_plan
 
-# CONSTANTS
-APPEND = "a"
-JSON = '.json'
-
-# DATA PARTITIONS
-TRAIN_PERCENT = 0.70
-TEST_PERCENT = 0.15
-DEV_PERCENT = 0.15
-
-# dataset paths
-TRAINING_SET_FILE = "../data-train/training_set.txt"
-DEV_SET_FILE = "../data-train/dev_set.txt"
-TESTING_SET_FILE = "../data-test/testing_set.txt"
-
-FOLDER_PATH = "/home/student.unimelb.edu.au/kvarghesemat/Alfred/json_feat_2.1.0/"
-# FOLDER_PATH = "/home/karun/Research_Project/alfred/data/json_feat_2.1.0/"
-# FOLDER_PATH = "/media/karun/My Passport/full_2.1.0/train/"
-
-GOTO_LOCATION = 'GotoLocation'
-PICKUP_ACTION = 'PickupObject'
-PUTDOWN_ACTION = 'PutObject'
-PICK_AND_PLACE = "pick_and_place_simple"
 
 # We need to divide the data set into train and test sets
 # We also limit training to a small subset of floor plans
@@ -42,7 +47,6 @@ floor_plans = {}
 agent_data = {}
 agent_init_data = {}
 
-# TODO REMOVE
 # Collecting statistics
 a_seq_total = 0.0
 a_seq_count = 0.0
@@ -307,8 +311,7 @@ def parse_json_file(file):
                 multi_descs_data = multi_descs_data + \
                                    get_multi_high_descs(task_high_desc)
 
-            # write_record(high_descs_data, multi_descs_data, task_descs_data,
-            #             training_record_type)
+            write_record(high_descs_data, multi_descs_data, task_descs_data, training_record_type)
 
 
 def write_record(high_descs_data, multi_descs_data, task_descs_data,
@@ -317,11 +320,11 @@ def write_record(high_descs_data, multi_descs_data, task_descs_data,
     records = task_descs_data + high_descs_data + multi_descs_data
 
     if training_record_type == 0:
-        out_file = open(TRAINING_SET_FILE, APPEND)
+        out_file = open(TRAIN_DATA_PATH, APPEND)
     elif training_record_type == 1:
-        out_file = open(DEV_SET_FILE, APPEND)
+        out_file = open(DEV_DATA_PATH, APPEND)
     else:
-        out_file = open(TESTING_SET_FILE, APPEND)
+        out_file = open(TEST_DATA_PATH, APPEND)
 
     for record in records:
         out_file.write(json.dumps(record) + '\n')

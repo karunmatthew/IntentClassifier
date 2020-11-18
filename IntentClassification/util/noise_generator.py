@@ -1,3 +1,9 @@
+# Author     :  Karun Mathew
+# Student Id :  1007247
+#
+# This program helps to generate data samples with a small amount of uniform noise
+# The noise is added to visual features alone
+
 import random
 import math
 from util.apputil import MAX_ANGLE, ARM_LENGTH

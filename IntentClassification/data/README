@@ -1,0 +1,5 @@
+This folder is created by rasa to store the training data for the model.
+
+The data needs to be geenrated into a format that RASA expects and saved in a file with name nlu.json
+
+This file under the /data folder of the project is automatically read by RAS for training the model

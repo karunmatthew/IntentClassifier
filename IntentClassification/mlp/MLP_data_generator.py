@@ -1,6 +1,10 @@
 # Author     :  Karun Mathew
 # Student Id :  1007247
 #
+# --------------------------------
+# BASELINE TRAINING DATA GENERATOR
+# --------------------------------
+#
 # This python class generates training data in the format that
 # is expected by the baseline classifier, a MultiLayer Perceptron
 #
@@ -33,7 +37,8 @@ from util.apputil import get_data, remove_special_characters, \
 import json
 import random
 
-TRAIN_SAMPLE_RATE = 40
+# Defines the percentage of data that is to be chosen from each of the datasets
+TRAIN_SAMPLE_RATE = 100
 TEST_SAMPLE_RATE = 100
 VALIDATION_SET_SAMPLE_RATE = 100
 

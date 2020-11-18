@@ -11,7 +11,7 @@ READ = "r"
 WRITE = 'w'
 
 RASA_OUTFILE = '../data/nlu.json'
-TRAIN_SAMPLE_RATE = 20
+TRAIN_SAMPLE_RATE = 60
 WITH_VISUAL = True
 CONSIDER_ROTATION = True
 MAX_ANGLE = 60
@@ -27,6 +27,24 @@ TEST_DATA_PATH = '../data-test/testing_set.txt'
 TRAIN_MLP_FULL_FILE = '../data-train/train_mlp_full.txt'
 DEV_MLP_FULL_FILE = '../data-train/dev_mlp_full.txt'
 TEST_MLP_FULL_FILE = '../data-test/test_mlp_full.txt'
+
+# CONSTANTS
+APPEND = "a"
+JSON = '.json'
+
+# DATA PARTITIONS
+TRAIN_PERCENT = 0.70
+TEST_PERCENT = 0.15
+DEV_PERCENT = 0.15
+
+FOLDER_PATH = "/home/student.unimelb.edu.au/kvarghesemat/Alfred/json_feat_2.1.0/"
+# FOLDER_PATH = "/home/karun/Research_Project/alfred/data/json_feat_2.1.0/"
+# FOLDER_PATH = "/media/karun/My Passport/full_2.1.0/train/"
+
+GOTO_LOCATION = 'GotoLocation'
+PICKUP_ACTION = 'PickupObject'
+PUTDOWN_ACTION = 'PutObject'
+PICK_AND_PLACE = "pick_and_place_simple"
 
 
 LANG_VISUAL_DELIMITER = '@@@@@@'

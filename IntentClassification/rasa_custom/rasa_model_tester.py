@@ -92,6 +92,8 @@ def print_statistics(actual_tags, correct, count, predicted_tags):
     print(precision_recall_fscore_support(actual_tags, predicted_tags,
                                           average='macro'))
     print(precision_recall_fscore_support(actual_tags, predicted_tags,
+                                          average='micro'))
+    print(precision_recall_fscore_support(actual_tags, predicted_tags,
                                           average=None,
                                           labels=LABELS))
     confusion = confusion_matrix(actual_tags, predicted_tags)

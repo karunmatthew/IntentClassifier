@@ -1,0 +1,7 @@
+MMIC.ipynb is the jupyter notebook for running the baseline model
+
+The baseline is a Multilayer Perceptron
+
+The jupyter notebook assumes that the training data is uploaded to google drive.
+So, run the alfred_training_data_generator.py and then run MLP_data_generator.py.
+Upload the generated data to Colab or to google drive and then continue.

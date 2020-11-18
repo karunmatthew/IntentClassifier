@@ -13,10 +13,10 @@ pipeline:
   features: [["prefix5", "prefix2", "BOS", "EOS", "digit", "pos", "pos2"],["prefix5", "prefix2", "BOS", "EOS", "digit", "pos", "pos2"],["prefix5", "prefix2", "BOS", "EOS", "digit", "pos", "pos2"]]
 - name: CRFEntityExtractor
 - name: rasa_custom.custom_diet_classifier.CustomDIETClassifier
-  epochs: 40
+  epochs: 30
   embedding_dimension: 40
   entity_recognition: False
-#  # batch_strategy: balanced        # prevents class imbalance
+  number_of_transformer_layers: 2
 - name: ResponseSelector
   epochs: 100
 
@@ -28,33 +28,3 @@ policies:
     max_history: 5
     epochs: 100
   - name: MappingPolicy
-
-
-
-#- name: EntitySynonymMapper
-# - name: rasa_custom.custom_rasa_tokenizer.CustomRasaTokenizer
-# - name: ConveRTTokenizer
-# - name: rasa_custom.custom_rasa_featuriser.CustomRASAFeaturizer
-# - name: ConveRTFeaturizer
-# - name: EntitySynonymMapper          # doesnt give any performance improvement
-# - name: DIETClassifier
-# pipeline:
-#  - name: custom_rasa_tokenizer.CustomRasaTokenizer
-#  - name: custom_rasa_featuriser.CustomRASAFeaturizer
-#  - name: custom_rasa_scene_info_featuriser.SceneInfoFeaturiser
-#  - name: CRFEntityExtractor
-#  - name: LexicalSyntacticFeaturizer
-##  - name: CountVectorsFeaturizer
-##  - name: CountVectorsFeaturizer
-##    analyzer: "char_wb"
-##    min_ngram: 1
-##    max_ngram: 4
-#  - name: DIETClassifier
-#    epochs: 100
-#    entity_recognition: False
-#  - name: EntitySynonymMapper
-#  - name: ResponseSelector
-#    epochs: 100
-#  intent_tokenization_flag: True
-#  intent_split_symbol: +
-#  case_sensitive: False
