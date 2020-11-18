@@ -3,7 +3,7 @@ README file for Intent Classification
 
 ## BASELINE SOLUTION
 
-The baseline solution can be found in baseline folder. The baseline solution uses a set of generic rules to identify the intent
+The baseline solution can be found in mlp folder. The baseline solution uses a set of generic rules to identify the intent
 
 
 ## RASA
@@ -22,9 +22,9 @@ Contains the training data input
 
 
 
-$ sudo apt update
-$ sudo apt install python3-dev python3-pip
-$ python3 -m venv ./venv
-$ source ./venv/bin/activate
-$ pip install -U pip
-$ pip install rasa
+$ sudo apt update <br/>
+$ sudo apt install python3-dev python3-pip <br/>
+$ python3 -m venv ./venv <br/>
+$ source ./venv/bin/activate <br/>
+$ pip install -U pip <br/>
+$ pip install rasa <br/>
