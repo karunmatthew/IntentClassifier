@@ -125,7 +125,6 @@ def create_rasa_training_set(file_path, out_file_path):
             intents.append(conj_with_visual)
             count += 1
 
-    print('intent distribution', intent_dist)
     intent_dist = {}
     for record in intents:
         intent_dist[record['intent']] = intent_dist.get(record['intent'], 0) + 1

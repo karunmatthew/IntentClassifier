@@ -9,45 +9,61 @@ import random
 JSON = '.json'
 READ = "r"
 WRITE = 'w'
-
-RASA_OUTFILE = '../data/nlu.json'
-TRAIN_SAMPLE_RATE = 60
-WITH_VISUAL = True
-CONSIDER_ROTATION = True
-MAX_ANGLE = 60
-ARM_LENGTH = 0.5
-
-RASA_SERVER = 'http://localhost:5005/model/parse'
-
-
-TRAIN_DATA_PATH = '../data-train/training_set.txt'
-DEV_DATA_PATH = '../data-train/dev_set.txt'
-TEST_DATA_PATH = '../data-test/testing_set.txt'
-
-TRAIN_MLP_FULL_FILE = '../data-train/train_mlp_full.txt'
-DEV_MLP_FULL_FILE = '../data-train/dev_mlp_full.txt'
-TEST_MLP_FULL_FILE = '../data-test/test_mlp_full.txt'
-
-# CONSTANTS
 APPEND = "a"
-JSON = '.json'
 
-# DATA PARTITIONS
+# DATA PARTITIONS TO BE MADE ON THE ENTIRE ALFRED DATASET
 TRAIN_PERCENT = 0.70
 TEST_PERCENT = 0.15
 DEV_PERCENT = 0.15
 
+# This should be updated to the folder that contains the ALFRED dataset
 FOLDER_PATH = "/home/student.unimelb.edu.au/kvarghesemat/Alfred/json_feat_2.1.0/"
-# FOLDER_PATH = "/home/karun/Research_Project/alfred/data/json_feat_2.1.0/"
-# FOLDER_PATH = "/media/karun/My Passport/full_2.1.0/train/"
+
+TRAIN_SAMPLE_RATE = 60
+
+# Physical constraints of the agent
+MAX_ANGLE = 60
+ARM_LENGTH = 0.5
+
+# Mode of run (DEFAULT MODE : True True)
+# (Should visual samples be considered ?
+#  Should agent orientation be considered ?
+WITH_VISUAL = True
+CONSIDER_ROTATION = True
+
+# the port where the rasa server is to be deployed
+# this enables other applications to communicate with this module
+# by sending a HTTP request to the 5005 port
+RASA_SERVER = 'http://localhost:5005/model/parse'
+
+# the output file used by rasa for training the model
+# this file has to be pointed to the data folder of the rasa project
+RASA_OUTFILE = '../data/nlu.json'
+
+# the path to the post-processed ALFRED data
+TRAIN_DATA_PATH = '../data-train/training_set.txt'
+DEV_DATA_PATH = '../data-train/dev_set.txt'
+TEST_DATA_PATH = '../data-test/testing_set.txt'
+
+# path to the post-processed data for the multi-layer perceptron
+# these files must be uploaded to colab(or google drive) to run the jupyter notebook
+TRAIN_MLP_FULL_FILE = '../data-train/train_mlp_full.txt'
+DEV_MLP_FULL_FILE = '../data-train/dev_mlp_full.txt'
+TEST_MLP_FULL_FILE = '../data-test/test_mlp_full.txt'
+
 
 GOTO_LOCATION = 'GotoLocation'
 PICKUP_ACTION = 'PickupObject'
 PUTDOWN_ACTION = 'PutObject'
+
+# currently we only consider task instances in ALFRED of type pick and place simple
 PICK_AND_PLACE = "pick_and_place_simple"
 
-
+# when language and visual data is send to the customized DIET classifier, they are separated by a delimiter
+# the delimiter pattern is shown below
 LANG_VISUAL_DELIMITER = '@@@@@@'
+
+# lists all the 16 unique intents
 LABELS = ['GotoLocation',
           'PickupObject',
           'PutObject',
@@ -66,6 +82,8 @@ LABELS = ['GotoLocation',
           'RotateAgent PickupObject GotoLocation'
           ]
 
+# mappings from intents to integers
+# this mapping is used in the multi-layer perceptron
 LABELS_MAP = {
           'GotoLocation': 0,
           'PickupObject': 1,
@@ -86,6 +104,7 @@ LABELS_MAP = {
           }
 
 
+# recursively scans and returns the list of all json files within a directory
 def get_json_file_paths(folder_path):
     file_paths = []
     for path, subdirs, files in os.walk(folder_path):
@@ -117,6 +136,7 @@ def get_agent_facing_direction_vector(agent_face_direction):
     return [x, z]
 
 
+# gets the angle between the object and the direction the agent is facing
 def get_dot_product_score(agent_pos, object_pos, agent_face_direction):
     f = get_agent_facing_direction_vector(agent_face_direction)
     o_a = np.subtract([object_pos[0], object_pos[2]], [agent_pos[0], agent_pos[2]])
@@ -143,6 +163,7 @@ def get_object_from_sentence(text):
     return ''
 
 
+# cleans up the natural language data
 def remove_special_characters(string_text):
     string_text = string_text.replace('\"', '')
     string_text = string_text.replace('\n', '')
@@ -153,7 +174,7 @@ def remove_special_characters(string_text):
     return string_text
 
 
-# returns the distance between two 3D co-ordinates
+# returns the euclidean distance between two 3D co-ordinates
 def get_L2_distance(X1, X2):
     return round(sqrt(pow(X1[0] - X2[0], 2) +
                       pow(X1[1] - X2[1], 2) +
