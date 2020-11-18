@@ -439,6 +439,10 @@ print('Train floor plans  :', len(train_floor_plans))
 print('Dev floor plans    :', len(dev_floor_plans))
 print('Test floor plans   :', len(test_floor_plans))
 
+open(TRAIN_DATA_PATH, "w")
+open(DEV_DATA_PATH, "w")
+open(TEST_DATA_PATH, "w")
+
 generate_training_data(FOLDER_PATH)
 
 print('Tasks-descs   : ', task_desc_total)
