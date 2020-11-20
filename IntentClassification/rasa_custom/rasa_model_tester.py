@@ -30,13 +30,8 @@ def read_test_data(file_path):
 
     count = 0.0
     correct = 0.0
-    extra_count = 0.0
-    extra_correct = 0.0
-
     predicted_tags = []
     actual_tags = []
-    extra_predicted_tags = []
-    extra_actual_tags = []
 
     for line in file:
         count += 1
@@ -48,13 +43,6 @@ def read_test_data(file_path):
         action_sequence_string = ' '.join(action_sequence)
         desc_string = ' '.join(desc)
         desc_string = remove_special_characters(desc_string)
-
-        # if the record_type is not task_desc add the record without visual information
-        if json_object['record_type'] != 'task_desc' and WITH_VISUAL:
-            text_string = copy.deepcopy(desc_string)
-            extra_correct = post_to_rasa(action_sequence_string, extra_actual_tags,
-                                         extra_correct, text_string, extra_predicted_tags)
-            extra_count += 1
 
         # test with both visual and language data
         if WITH_VISUAL:
@@ -79,10 +67,6 @@ def read_test_data(file_path):
         correct = post_to_rasa(action_sequence_string, actual_tags, correct, desc_string, predicted_tags)
 
     print_statistics(actual_tags, correct, count, predicted_tags)
-    # Test the performance without visual info for entries that do not need
-    # visual info, to check that language is still given importance
-    print_statistics(actual_tags + extra_actual_tags, correct + extra_correct,
-                     extra_count + count, predicted_tags + extra_predicted_tags)
 
 
 def print_statistics(actual_tags, correct, count, predicted_tags):
@@ -122,8 +106,6 @@ def post_to_rasa(action_sequence_string, actual_tags, correct, desc_string, pred
     actual_tags.append(action_sequence_string.strip())
     if intent.strip() == action_sequence_string.strip():
         correct += 1
-    # elif tag == 'NOT_SUPPORTED':
-    #    correct += 1
     else:
         print('NOT MATCH : ', data)
         print(response_json)
