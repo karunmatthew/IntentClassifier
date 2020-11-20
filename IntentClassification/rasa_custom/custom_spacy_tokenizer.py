@@ -34,7 +34,7 @@ class CustomSpacyTokenizer(Tokenizer):
 
         # extract the visual information from the text information
         if LANG_VISUAL_DELIMITER in message.text:
-            visual_data_string = message.text[message.text.index(LANG_VISUAL_DELIMITER)+7:]
+            visual_data_string = message.text[message.text.index(LANG_VISUAL_DELIMITER) + 1 + len(LANG_VISUAL_DELIMITER):]
             message.set('visual_info', visual_data_string.strip())
             message.text = message.text[0: message.text.index(LANG_VISUAL_DELIMITER)]
 

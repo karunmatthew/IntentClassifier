@@ -19,7 +19,7 @@ DEV_PERCENT = 0.15
 # This should be updated to the folder that contains the ALFRED dataset
 FOLDER_PATH = "/home/student.unimelb.edu.au/kvarghesemat/Alfred/json_feat_2.1.0/"
 
-TRAIN_SAMPLE_RATE = 60
+TRAIN_SAMPLE_RATE = 20
 
 # Physical constraints of the agent
 MAX_ANGLE = 60
@@ -30,6 +30,9 @@ ARM_LENGTH = 0.5
 #  Should agent orientation be considered ?
 WITH_VISUAL = True
 CONSIDER_ROTATION = True
+
+# the decimal place precision used in the project
+PRECISION = 2
 
 # the port where the rasa server is to be deployed
 # this enables other applications to communicate with this module
@@ -62,6 +65,11 @@ PICK_AND_PLACE = "pick_and_place_simple"
 # when language and visual data is send to the customized DIET classifier, they are separated by a delimiter
 # the delimiter pattern is shown below
 LANG_VISUAL_DELIMITER = '@@@@@@'
+
+# defines the maximum distance for a generated sample
+# when visual features for a sample is generated, we
+# limit each distance feature to a max value
+MAX_DISTANCE = 8
 
 # lists all the 16 unique intents
 LABELS = ['GotoLocation',
