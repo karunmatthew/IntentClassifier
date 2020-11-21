@@ -1,6 +1,3 @@
-README file for Intent Classification
-
-
 ## MultiLayer Perceptron - Baseline
 
 The baseline solution can be found in the mlp folder. The jupyter notebook has also been attached.
