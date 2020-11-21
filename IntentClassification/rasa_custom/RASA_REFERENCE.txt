@@ -1,70 +1,11 @@
 rasa train
 rasa shell
 rasa shell nlu
-rasa shell nlu -m models/20200922-224958_visual_internal_train_100.tar.gz
-rasa shell nlu -m models/20200915-190011_Visual_Features_with_obj_recept_dist.tar.gz
-rasa shell nlu -m models/20201013-031018.tar.gz
 rasa shell nlu -m models/20201027-211357.tar.gz
 rasa run --enable-api -m models/20201027-211357.tar.gz
-rasa run --enable-api -m models/20201027-221539.tar.gz
-rasa run --enable-api -m models/20201028-013350.tar.gz
-
-rasa run --enable-api -m models/20200921-233616.tar.gz
-rasa run --enable-api -m models/20200922-014604_train_10_visual_3_features_internal.tar.gz
-rasa run --enable-api -m models/20200922-131905.tar.gz
-rasa run --enable-api -m models/20200922-160754_visual_internal_truly_train_10.tar.gz
-rasa run --enable-api -m models/20200922-224958_visual_internal_train_100.tar.gz
-rasa run --enable-api -m models/20200928-181020.tar.gz
-
-rasa run --enable-api -m models/20201028-181246.tar.gz
-
-
-
-SPACY MODELS
-
-rasa run --enable-api -m models/20200929-111348.tar.gz
-
-Customized Spacy Model
-
-rasa run --enable-api -m models/20200929-123703.tar.gz
-
-Customized Spacy Model with zero varied
-
-rasa run --enable-api -m models/20200929-131808.tar.gz
-
-Customized Spacy Model with more tweaks
-
-rasa run --enable-api -m models/20200929-172401.tar.gz
-
-rasa run --enable-api -m models/20200929-213409.tar.gz
-
-rasa run --enable-api -m models/20200930-010747.tar.gz
-
-100% train No VISUAL
-
-rasa run --enable-api -m models/20200930-135727.tar.gz
-
-20% train
-
-rasa run --enable-api -m models/20200930-110228_spacy_20.tar.gz
-
-
-rasa run --enable-api -m models/20201103-012125_train_20_rotate_max_60.tar.gz
-rasa run --enable-api -m models/20201103-173305_train_40_rotate_max_60.tar.gz
-rasa run --enable-api -m models/20201104-015523_train_40_rotate_60.tar.gz
-rasa run --enable-api -m models/20201104-030516_train_20_rotate_max_60.tar.gz
-rasa run --enable-api -m models/20201104-114530_train_10_rotate_max_60.tar.gz
-rasa run --enable-api -m models/20201104-122959_train_10_rotate_max_angle_ceil_60.tar.gz
-rasa shell nlu -m models/20201104-122959_train_10_rotate_max_angle_ceil_60.tar.gz
-rasa run --enable-api -m models/20201105-211519_train_20_max_rotate_60_embed_30.tar.gz
-
-pick up the glass vase on the table @@@@@@ 0.0 -1 -1 0.46
-
+# to bring custom modules to python path
 export PYTHONPATH=/home/karun/PycharmProjects/IntentClassification/rasa_custom/:$PYTHONPATH
-
 dbms.security.procedures.unrestricted=gds.*
-
-
 pip3 install rasa[spacy]
 python3 -m spacy download en_core_web_lg
 python3 -m spacy link en_core_web_lg en

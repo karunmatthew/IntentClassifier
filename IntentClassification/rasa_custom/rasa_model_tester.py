@@ -27,9 +27,10 @@ headers = {
 }
 
 
-# accepts the test / validation dataset file path and tries to predict the intent
-# and prints out the statistics
-def read_test_data(file_path):
+# accepts the test / validation dataset file path
+# predicts the intent(s) for each data instance
+# prints out the model performance statistics
+def test_model(file_path):
     file = open(file_path, READ)
 
     count = 0.0
@@ -70,6 +71,7 @@ def read_test_data(file_path):
 
         correct = post_to_rasa(action_sequence_string, actual_tags, correct, desc_string, predicted_tags)
 
+    # print out the performance statistics of the model
     print_statistics(actual_tags, correct, count, predicted_tags)
 
 
@@ -89,6 +91,8 @@ def print_statistics(actual_tags, correct, count, predicted_tags):
     print(confusion)
 
 
+# removes special characters in the text data, as we will not encounter
+# such data in the real world when we convert voice commands to text
 def remove_special_characters(desc_string):
     desc_string = desc_string.replace('\"', '')
     desc_string = desc_string.replace('.', '')
@@ -98,6 +102,9 @@ def remove_special_characters(desc_string):
     return desc_string
 
 
+# post a single data instance to the RASA server
+# the data includes both language and visual data
+# delimited by the LANG_VISUAL_DELIMITER specified in apputil
 def post_to_rasa(action_sequence_string, actual_tags, correct, desc_string, predicted_tags):
 
     data = '{"text": "' + desc_string + '"}'
@@ -111,35 +118,42 @@ def post_to_rasa(action_sequence_string, actual_tags, correct, desc_string, pred
     if intent.strip() == action_sequence_string.strip():
         correct += 1
     else:
-        print('NOT MATCH : ', data)
-        print(response_json)
-        print('Predicted Intent :', intent, ' Confidence :', confidence)
-        print('Actual Intent :', action_sequence_string)
+        print('Intent Prediction Error')
+        print('Input            :: ', data)
+        print('Output Response  :: ', response_json)
+        print('Predicted Intent :: ', intent, ' Confidence :', confidence)
+        print('Actual Intent    :: ', action_sequence_string)
         print('\n')
     return correct
 
 
-print('RASA MODEL TESTER')
-print('PRE-REQUISITES: The rasa model has been trained and the model file has been generated'
-      '\n This program starts the server at port 5005 and the test samples are posted to it'
-      '\n The model file is to be passed in as input'
-      '\n Please select the model file using the file dialog')
+# ------------------------------------ START OF MAIN -------------------------------------------#
+try:
+    print('RASA MODEL TESTER')
+    print('PRE-REQUISITES: The rasa model has been trained and the model file has been generated'
+          '\n This program starts the server at port 5005 and the test samples are posted to it'
+          '\n Please select the model file and the test dataset file using the file dialog')
 
-root = tk.Tk()
-root.withdraw()
-model_file_path = filedialog.askopenfilename(initialdir="../", title='Select the model tar.gz file')
-print('Model file selected at :: ', model_file_path)
-# start the server process
-if len(model_file_path) > 0:
-    os.system('rasa run --enable-api -m ' + model_file_path + ' &')
-    time.sleep(RASA_SERVER_STARTUP_TIME)
+    root = tk.Tk()
+    root.withdraw()
+    model_file_path = filedialog.askopenfilename(initialdir="../", title='Select the model tar.gz file')
+    print('\nModel file selected at :: ', model_file_path)
+    # start the server process
+    if len(model_file_path) > 0:
+        print('\nStarting the RASA server process.....\n')
+        os.system('rasa run --enable-api -m ' + model_file_path + ' &')
+        time.sleep(RASA_SERVER_STARTUP_TIME)
 
-    test_file_path = filedialog.askopenfilename(initialdir="../", title='Select the test file')
-    if len(test_file_path) > 0:
-        read_test_data(test_file_path)
-    else:
-        read_test_data(DEV_DATA_PATH)
+        print('Select the test file. If none given, will default to the validation set file')
+        test_file_path = filedialog.askopenfilename(initialdir="../", title='Select the test file')
+        if len(test_file_path) > 0:
+            print('Selected test file :: ', test_file_path)
+            test_model(test_file_path)
+        else:
+            test_model(DEV_DATA_PATH)
 
+finally:
     # kill the server process running in 5005 port
+    print('\nKilling server process')
     os.system('fuser -k 5005/tcp')
-
+# ------------------------------------------------------------------------------------------ #
