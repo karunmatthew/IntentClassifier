@@ -21,7 +21,10 @@ Please run the alfred data generator and the mlp training data generator and upl
     $ pip3 install rasa[spacy] <br/>
     $ python3 -m spacy download en_core_web_lg <br/>
     $ python3 -m spacy link en_core_web_lg en <br/>
-
+    
+    Dependecies for the file dialog
+    
+    $ sudo apt-get install python3-tk
 
 
 1. Download the ALFRED data
@@ -32,20 +35,34 @@ Please run the alfred data generator and the mlp training data generator and upl
     
     
 2. Run the alfred data generator
+     ./IntentClassifier/IntentClassification/preprocess/alfred_training_data_generator.py
+    
     
 3. Run the rasa training data generator
-
-4. Train the rasa model
+     ./IntentClassifier/IntentClassification/rasa_custom/rasa_training_data_generator.py
+ 
+ 
+4. Train the rasa model by typing in the following command at the project context root folder
     $ rasa train
     
+    
 5. Test the rasa model
-    The rasa model should be loaded and run before the rasa-test is started.
+    Run the file at ./IntentClassifier/IntentClassification/rasa_custom/rasa_model_tester.py
+    This program prompts you to input the trained model tar.gz file and the test file
+    
+    The model file can be found in the ./models folder of the project after the training is completed
+    The test file can be found inside the ./data-test folder
 
 
-## PREPROCESS
 
+
+
+
+# preprocess
 Contains the code for generating the training data and for creating the training set in the format that RASA understands
 
+# rasa_custom
+This folder contains all the custom components written for the customized DIET architecture
 
 # data-train 
 Contains the training data input and the validation set
