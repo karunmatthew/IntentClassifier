@@ -444,7 +444,7 @@ class CustomDIETClassifier(IntentClassifier, EntityExtractor):
         if message.get(DENSE_FEATURE_NAMES[attribute]) is not None:
             dense_features = message.get(DENSE_FEATURE_NAMES[attribute])
             visual_info = message.get('visual_info')
-            print('Visual Info: ', visual_info)
+            # print('Visual Info: ', visual_info)
             if attribute == TEXT and visual_info is not None:
                 visual_dense_features = dense_features
                 visual_data = visual_info.strip().split(' ')

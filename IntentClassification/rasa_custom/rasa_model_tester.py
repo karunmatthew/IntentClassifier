@@ -7,15 +7,19 @@
 
 import random
 import math
+# install tkinter package so as to open the file dialog
+import tkinter as tk
+from tkinter import filedialog
+import os
+import time
 import requests
 import json
-import copy
-from math import sqrt
 from sklearn.metrics import precision_recall_fscore_support
 from sklearn.metrics import confusion_matrix
 from util.alfred_json_parser import get_visual_information
 from util.apputil import READ, RASA_SERVER, DEV_DATA_PATH,\
-    MAX_ANGLE, WITH_VISUAL, LABELS, LANG_VISUAL_DELIMITER
+    MAX_ANGLE, WITH_VISUAL, LABELS, LANG_VISUAL_DELIMITER,\
+    RASA_SERVER_STARTUP_TIME
 
 
 headers = {
@@ -115,4 +119,27 @@ def post_to_rasa(action_sequence_string, actual_tags, correct, desc_string, pred
     return correct
 
 
-read_test_data(DEV_DATA_PATH)
+print('RASA MODEL TESTER')
+print('PRE-REQUISITES: The rasa model has been trained and the model file has been generated'
+      '\n This program starts the server at port 5005 and the test samples are posted to it'
+      '\n The model file is to be passed in as input'
+      '\n Please select the model file using the file dialog')
+
+root = tk.Tk()
+root.withdraw()
+model_file_path = filedialog.askopenfilename(initialdir="../", title='Select the model tar.gz file')
+print('Model file selected at :: ', model_file_path)
+# start the server process
+if len(model_file_path) > 0:
+    os.system('rasa run --enable-api -m ' + model_file_path + ' &')
+    time.sleep(RASA_SERVER_STARTUP_TIME)
+
+    test_file_path = filedialog.askopenfilename(initialdir="../", title='Select the test file')
+    if len(test_file_path) > 0:
+        read_test_data(test_file_path)
+    else:
+        read_test_data(DEV_DATA_PATH)
+
+    # kill the server process running in 5005 port
+    os.system('fuser -k 5005/tcp')
+
