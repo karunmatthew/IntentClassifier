@@ -38,7 +38,7 @@ PRECISION = 2
 # this enables other applications to communicate with this module
 # by sending a HTTP request to the 5005 port
 RASA_SERVER = 'http://localhost:5005/model/parse'
-
+RASA_SERVER_STARTUP_TIME = 20
 # the output file used by rasa for training the model
 # this file has to be pointed to the data folder of the rasa project
 RASA_OUTFILE = '../data/nlu.json'
