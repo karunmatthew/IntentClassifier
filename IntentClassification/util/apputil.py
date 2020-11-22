@@ -1,6 +1,5 @@
 import os
 import spacy
-import torch
 import numpy as np
 import math
 from math import sqrt
@@ -152,14 +151,6 @@ def get_dot_product_score(agent_pos, object_pos, agent_face_direction):
         return 1
     else:
         return get_dot_product(f, o_a)
-
-
-def get_default_device():
-    """Pick GPU if available, else CPU"""
-    if torch.cuda.is_available():
-        return torch.device('cuda')
-    else:
-        return torch.device('cpu')
 
 
 def get_object_from_sentence(text):
