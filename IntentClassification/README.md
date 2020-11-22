@@ -42,9 +42,11 @@ Please run the alfred data generator and the mlp training data generator and upl
      ./IntentClassifier/IntentClassification/rasa_custom/rasa_training_data_generator.py<br/>
  
  
-4. Train the rasa model by typing in the following command at the project context root folder<br/>
-    Before training the rasa model, ensure that the rasa custom components are present in the PYTHONPATH environment variable <br/>
-    export PYTHONPATH=${PATH_TO_PROJECT}/IntentClassification/rasa_custom/:$PYTHONPATH <br/>
+4. Training the RASA model <br/>
+    Before training the rasa model, ensure that the rasa custom components folder path is added to the PYTHONPATH environment variable <br/>
+    $export PYTHONPATH=${PATH_TO_PROJECT}/IntentClassification/rasa_custom/:$PYTHONPATH <br/>
+    
+    Train the rasa model by typing in the following command at the project context root folder
     $ rasa train<br/>
     
     
