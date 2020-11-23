@@ -63,6 +63,7 @@ Please run the alfred data generator and the mlp training data generator and upl
           rasa shell nlu -m models/20201027-211357.tar.gz
         
     (ii)  Enter the test sample - LANGUAGE ONLY
+    
           e.g. 
                INPUT                                                                        INTENT
                Pick the book from the corner of the shelf                                   PickupObject            
