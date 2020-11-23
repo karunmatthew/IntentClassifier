@@ -6,6 +6,7 @@ Please run the alfred data generator and the mlp training data generator and upl
 
 ## RASA
 0. Install Rasa and the dependencies for spacy<br/>
+.
 
     $ sudo apt update <br/>
     $ sudo apt install python3-dev python3-pip <br/>
@@ -28,6 +29,8 @@ Please run the alfred data generator and the mlp training data generator and upl
 
 
 1. Download the ALFRED data<br/>
+.
+
     ALFRED data can be downloaded at https://github.com/askforalfred/alfred/tree/master/data/json_2.1.0 <br/>
     
     We used the full dataset for the project (109 GB)<br/>
@@ -35,14 +38,20 @@ Please run the alfred data generator and the mlp training data generator and upl
     
     
 2. Run the alfred data generator<br/>
+.
+
      ./IntentClassifier/IntentClassification/preprocess/alfred_training_data_generator.py<br/>
     
     
 3. Run the rasa training data generator<br/>
+.
+
      ./IntentClassifier/IntentClassification/rasa_custom/rasa_training_data_generator.py<br/>
  
  
-4. Training the RASA model <br/>
+4. Training the RASA model
+.
+
     Before training the rasa model, ensure that the rasa custom components folder path is added to the PYTHONPATH environment variable <br/>
     $export PYTHONPATH=${PATH_TO_PROJECT}/IntentClassification/rasa_custom/:$PYTHONPATH <br/>
     
@@ -51,6 +60,8 @@ Please run the alfred data generator and the mlp training data generator and upl
     
     
 5. Test the rasa model<br/>
+.
+
     Run the file at ./IntentClassifier/IntentClassification/rasa_custom/rasa_model_tester.py <br/>
     This program prompts you to input the trained model tar.gz file and the test file<br/>
     
