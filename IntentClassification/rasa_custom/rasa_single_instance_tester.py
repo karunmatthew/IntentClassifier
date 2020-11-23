@@ -38,6 +38,8 @@ def post_to_rasa(command):
     print('Confidence Score : ', confidence)
     print('Intent Rankings  : ', intent_ranking)
 
+    return intent, confidence, intent_ranking
+
 
 # Sample test instances
 
