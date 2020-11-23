@@ -7,7 +7,7 @@ Please run the alfred data generator and the mlp training data generator and upl
 ## RASA
 0. Install Rasa and the dependencies for spacy<br/>
 
-    '''
+    ```
    
     $ sudo apt update <br/>
     $ sudo apt install python3-dev python3-pip <br/>
@@ -28,7 +28,7 @@ Please run the alfred data generator and the mlp training data generator and upl
     
     $ sudo apt-get install python3-tk<br/>
    
-   '''
+   ```
 
 1. Download the ALFRED data<br/>
 
