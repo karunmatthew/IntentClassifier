@@ -130,6 +130,15 @@ Please run the alfred data generator and the mlp training data generator and upl
             Actual Intent --> GotoLocation PutObject
 
 
+7. To test a single instance programmatically,
+    ```
+    Run the pos_to_rasa method in IntentClassification/rasa_custom/rasa_single_instance_tester.py
+    
+    The RASA server is assumed to be running with the correct model deployed
+    Use the below command to start the server,
+    rasa run --enable-api -m models/20201122-221841.tar.gz
+    Replace with the appropriate model file
+    ````
 # preprocess
 Contains the code for generating the training data and for creating the training set in the format that RASA understands
 
