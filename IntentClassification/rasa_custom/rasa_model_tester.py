@@ -146,8 +146,10 @@ try:
         time.sleep(RASA_SERVER_STARTUP_TIME)
 
         print('Select the test file. If none given, will default to the validation set file')
+        root.update()
         test_file_path = filedialog.askopenfilename(initialdir="../", title='Select the test file')
         test_file_path = test_file_path.replace(' ', '\ ')
+        root.destroy()
         if len(test_file_path) > 0:
             print('Selected test file :: ', test_file_path)
             test_model(test_file_path)
