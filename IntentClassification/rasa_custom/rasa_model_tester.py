@@ -138,6 +138,7 @@ try:
     root.withdraw()
     model_file_path = filedialog.askopenfilename(initialdir="../", title='Select the model tar.gz file')
     print('\nModel file selected at :: ', model_file_path)
+    model_file_path = model_file_path.replace(' ', '\ ')
     # start the server process
     if len(model_file_path) > 0:
         print('\nStarting the RASA server process.....\n')
@@ -146,6 +147,7 @@ try:
 
         print('Select the test file. If none given, will default to the validation set file')
         test_file_path = filedialog.askopenfilename(initialdir="../", title='Select the test file')
+        test_file_path = test_file_path.replace(' ', '\ ')
         if len(test_file_path) > 0:
             print('Selected test file :: ', test_file_path)
             test_model(test_file_path)

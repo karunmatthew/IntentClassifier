@@ -1,8 +1,8 @@
 rasa train
 rasa shell
 rasa shell nlu
-rasa shell nlu -m models/20201027-211357.tar.gz
-rasa run --enable-api -m models/20201027-211357.tar.gz
+rasa shell nlu -m models/220201122-221841.tar.gz
+rasa run --enable-api -m models/20201122-221841.tar.gz
 # to bring custom modules to python path
 export PYTHONPATH=/home/karun/PycharmProjects/IntentClassification/rasa_custom/:$PYTHONPATH
 dbms.security.procedures.unrestricted=gds.*
