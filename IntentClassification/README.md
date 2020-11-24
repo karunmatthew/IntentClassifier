@@ -40,11 +40,17 @@ Please run the alfred data generator and the mlp training data generator and upl
     
 2. Run the alfred data generator<br/>
    ```
+   Remember to activate the virtual environment in the Intent Classification folder
+   $ source venv/bin/activate
+   
    ./IntentClassifier/IntentClassification/preprocess/alfred_training_data_generator.py
    ```
     
 3. Run the rasa training data generator<br/>
    ```
+   Remember to activate the virtual environment in the Intent Classification folder
+   $ source venv/bin/activate
+   
    ./IntentClassifier/IntentClassification/rasa_custom/rasa_training_data_generator.py
    ```
  
@@ -52,6 +58,9 @@ Please run the alfred data generator and the mlp training data generator and upl
     ```
     Before training the rasa model, ensure that the rasa custom components folder path is added to the PYTHONPATH environment variable
     $export PYTHONPATH=${PATH_TO_PROJECT}/IntentClassification/rasa_custom/:$PYTHONPATH
+    
+    Remember to activate the virtual environment in the Intent Classification folder
+    $ source venv/bin/activate
     
     Train the rasa model by typing in the following command at the project context root folder
     $ rasa train
@@ -133,6 +142,9 @@ Please run the alfred data generator and the mlp training data generator and upl
 
 7. To test a single instance programmatically,
     ```
+    Remember to activate the virtual environment in the Intent Classification folder
+    $ source venv/bin/activate
+   
     Run the pos_to_rasa method in IntentClassification/rasa_custom/rasa_single_instance_tester.py
     
     The RASA server is assumed to be running with the correct model deployed
