@@ -10,6 +10,7 @@ import math
 # install tkinter package so as to open the file dialog
 import tkinter as tk
 from tkinter import filedialog
+import platform
 import os
 import time
 import requests
@@ -26,6 +27,11 @@ headers = {
     'Content-type': 'application/json'
 }
 
+# Kill any process running on the RASA server default port 5005
+if platform.system() == 'Linux':
+    os.system('fuser -k 5005/tcp')
+else:
+    os.system('kill pid $(lsof -ti:5005)')
 
 # accepts the test / validation dataset file path
 # predicts the intent(s) for each data instance
@@ -137,27 +143,27 @@ try:
     root = tk.Tk()
     root.withdraw()
     model_file_path = filedialog.askopenfilename(initialdir="../", title='Select the model tar.gz file')
+    root.update()
     print('\nModel file selected at :: ', model_file_path)
-    model_file_path = model_file_path.replace(' ', '\ ')
     # start the server process
     if len(model_file_path) > 0:
         print('\nStarting the RASA server process.....\n')
-        os.system('rasa run --enable-api -m ' + model_file_path + ' &')
+        os.system('rasa run --enable-api -m "' + model_file_path + '" &')
         time.sleep(RASA_SERVER_STARTUP_TIME)
 
-        print('Select the test file. If none given, will default to the validation set file')
-        root.update()
+        print('Select the test file.')
         test_file_path = filedialog.askopenfilename(initialdir="../", title='Select the test file')
-        test_file_path = test_file_path.replace(' ', '\ ')
+        root.update()
         root.destroy()
         if len(test_file_path) > 0:
             print('Selected test file :: ', test_file_path)
             test_model(test_file_path)
-        else:
-            test_model(DEV_DATA_PATH)
 
 finally:
     # kill the server process running in 5005 port
     print('\nKilling server process')
-    os.system('fuser -k 5005/tcp')
+    if platform.system() == 'Linux':
+        os.system('fuser -k 5005/tcp')
+    else:
+        os.system('kill pid $(lsof -ti:5005)')
 # ------------------------------------------------------------------------------------------ #
