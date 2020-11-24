@@ -16,6 +16,7 @@ Please run the alfred data generator and the mlp training data generator and upl
     $ pip install rasa==1.10.12
      OR
     $ pip3 install rasa==1.10.12
+    $ pip3 install rasa[full]==1.10.12
 
     Dependencies for Spacy
 
@@ -65,7 +66,7 @@ Please run the alfred data generator and the mlp training data generator and upl
     The test file can be found inside the ./data-test folder
     ```
 
-6. To test the rasa model, one sample at a time
+6. To test the rasa model manually using RASA shell (typing in one sample at a time)
 
     (i)   Bring up the rasa shell window with the appropriate model file
           rasa shell nlu -m models/20201027-211357.tar.gz
