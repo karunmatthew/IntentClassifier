@@ -16,6 +16,7 @@ Please run the alfred data generator and the mlp training data generator and upl
     $ pip install rasa==1.10.12
      OR
     $ pip3 install rasa==1.10.12
+    $ pip3 install rasa==1.10.12[full]
 
     Dependencies for Spacy
 
