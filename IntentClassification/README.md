@@ -26,7 +26,7 @@ Please run the alfred data generator and the mlp training data generator and upl
     
     Dependecies for the file dialog
     
-    $ sudo apt-get install python3-tk
+    $ sudo apt-get install python3.6-tk
    
    ```
 
